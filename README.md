@@ -32,3 +32,7 @@ Do not upload node_modules or package-lock.json.
 - Favorite buttons on treatment cards
 - Expanded sauna catalogue: Finnish, wood-burning, electric, infrared, smoke, barrel, salt and herbal sauna styles
 - More polished card, button and scroll reveal animations
+
+
+## V18
+Fixed catalogue title collision on the Treatments page so the heading no longer slides behind the treatment cards. Kept the scrollbar hidden and preserved browser back/forward routing.
