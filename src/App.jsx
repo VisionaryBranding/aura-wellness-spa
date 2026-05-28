@@ -1,0 +1,401 @@
+import React, { useEffect, useMemo, useState } from "react";
+import Lenis from "lenis";
+import {
+  ArrowRight,
+  ChevronDown,
+  Grid3X3,
+  Heart,
+  Menu,
+  Minus,
+  Moon,
+  Plus,
+  Search,
+  ShoppingBag,
+  SunMedium,
+  X
+} from "lucide-react";
+
+const HERO_IMAGE = "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?auto=format&fit=crop&w=2200&q=85";
+const SAUNA_IMAGE = "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1600&q=85";
+const MASSAGE_IMAGE = "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1600&q=85";
+const FACIAL_IMAGE = "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1600&q=85";
+const STEAM_IMAGE = "https://images.unsplash.com/photo-1591343395082-e120087004b4?auto=format&fit=crop&w=1600&q=85";
+const LOUNGE_IMAGE = "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1600&q=85";
+
+const TREATMENTS = [
+  { id: 1, name: "Thermal Spa Day Pass", category: "Thermal", price: 95, duration: "3 hours", tag: "Facility access", image: HERO_IMAGE, description: "Pool access, steam room, dry sauna, jacuzzi and recovery lounge." },
+  { id: 2, name: "Finnish Dry Sauna", category: "Sauna", price: 55, duration: "35 min", tag: "Dry heat", image: SAUNA_IMAGE, description: "Cedar-lined dry heat with cold towels and mineral water." },
+  { id: 3, name: "Nordic Sauna Circuit", category: "Sauna", price: 90, duration: "55 min", tag: "Contrast ritual", image: "https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?auto=format&fit=crop&w=1600&q=85", description: "Guided heat, cool reset and quiet recovery sequence." },
+  { id: 4, name: "Panoramic Sauna Suite", category: "Sauna", price: 115, duration: "60 min", tag: "Private", image: "https://images.unsplash.com/photo-1610212866980-60ba29b7c629?auto=format&fit=crop&w=1600&q=85", description: "Private sauna room with robe service and quiet seating." },
+  { id: 5, name: "Eucalyptus Steam Room", category: "Steam", price: 60, duration: "30 min", tag: "Mist", image: STEAM_IMAGE, description: "Warm eucalyptus mist for skin softness and breathing." },
+  { id: 6, name: "Hammam Body Polish", category: "Steam", price: 135, duration: "75 min", tag: "Body ritual", image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&w=1600&q=85", description: "Steam, cleanse, full-body polish and warm rinse." },
+  { id: 7, name: "Private Jacuzzi Suite", category: "Jacuzzi", price: 160, duration: "75 min", tag: "Private soak", image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=1600&q=85", description: "Low-light hydrotherapy with robe service and calm seating." },
+  { id: 8, name: "Couples Jacuzzi Escape", category: "Jacuzzi", price: 260, duration: "90 min", tag: "For two", image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1600&q=85", description: "Private jacuzzi time, synchronized bodywork and recovery lounge." },
+  { id: 9, name: "Deep Calm Massage", category: "Massage", price: 115, duration: "60 min", tag: "Tension relief", image: MASSAGE_IMAGE, description: "Slow pressure and warm oil for back, neck and nervous-system reset." },
+  { id: 10, name: "Hot Stone Massage", category: "Massage", price: 145, duration: "75 min", tag: "Warm stones", image: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1600&q=85", description: "Warm stone therapy paired with slow massage for deeper release." },
+  { id: 11, name: "Botanical Glow Facial", category: "Facials", price: 130, duration: "70 min", tag: "Glow", image: FACIAL_IMAGE, description: "Hydrating facial, sculpting massage and botanical mask." },
+  { id: 12, name: "Full Wellness Escape", category: "Thermal", price: 310, duration: "Half day", tag: "Complete day", image: LOUNGE_IMAGE, description: "Pool, sauna, jacuzzi, steam, massage and facial in one spa day." }
+];
+
+const CATEGORIES = ["All", "Thermal", "Sauna", "Steam", "Jacuzzi", "Massage", "Facials"];
+
+const MEGA = {
+  Treatments: ["New rituals", "Thermal circuit", "Saunas", "Steam rooms", "Jacuzzis", "Massage", "Facials"],
+  Booking: ["Book a spa day", "Private suite", "Couples ritual", "Gift voucher"],
+  About: ["Our philosophy", "Thermal etiquette", "Products & rituals"]
+};
+
+function money(value) {
+  return `$${value}`;
+}
+
+export default function App() {
+  const [page, setPage] = useState("home");
+  const [category, setCategory] = useState("All");
+  const [query, setQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState("light");
+  const [bag, setBag] = useState([]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return TREATMENTS.filter((item) => {
+      const categoryMatch = category === "All" || item.category === category;
+      const text = `${item.name} ${item.category} ${item.tag} ${item.description}`.toLowerCase();
+      return categoryMatch && (!q || text.includes(q));
+    });
+  }, [category, query]);
+
+  const bagCount = bag.reduce((sum, item) => sum + item.qty, 0);
+  const bagTotal = bag.reduce((sum, item) => sum + item.qty * item.price, 0);
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.18,
+      smoothWheel: true,
+      wheelMultiplier: 0.82,
+      touchMultiplier: 1.12,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+    });
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+    return () => lenis.destroy();
+  }, []);
+
+  useEffect(() => {
+    const nodes = document.querySelectorAll(".reveal");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    }, { threshold: 0.14 });
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, [page, category]);
+
+  function goTo(next) {
+    setPage(next);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function addToBag(item) {
+    setBag((current) => {
+      const exists = current.find((entry) => entry.id === item.id);
+      if (exists) return current.map((entry) => entry.id === item.id ? { ...entry, qty: entry.qty + 1 } : entry);
+      return [...current, { ...item, qty: 1 }];
+    });
+  }
+
+  function updateQty(id, amount) {
+    setBag((current) => current.map((item) => item.id === id ? { ...item, qty: Math.max(0, item.qty + amount) } : item).filter((item) => item.qty > 0));
+  }
+
+  return (
+    <div className={`ssenseSite ${theme === "dark" ? "dark" : ""}`}>
+      <Header page={page} goTo={goTo} theme={theme} setTheme={setTheme} bagCount={bagCount} bagTotal={bagTotal} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <main>
+        {page === "home" && <Home goTo={goTo} addToBag={addToBag} setCategory={setCategory} />}
+        {page === "treatments" && <Treatments filtered={filtered} category={category} setCategory={setCategory} query={query} setQuery={setQuery} addToBag={addToBag} />}
+        {page === "bag" && <Bag bag={bag} updateQty={updateQty} total={bagTotal} goTo={goTo} />}
+        {page === "about" && <About />}
+        {page === "gallery" && <Gallery />}
+        {page === "contact" && <Contact />}
+      </main>
+      <Footer goTo={goTo} />
+    </div>
+  );
+}
+
+function Header({ page, goTo, theme, setTheme, bagCount, bagTotal, menuOpen, setMenuOpen }) {
+  const nav = ["Treatments", "Booking", "About", "Gallery", "Contact"];
+  return (
+    <>
+      <div className="announcement">AURA WELLNESS SPA / SOFIA / OPEN DAILY 09:00—21:00</div>
+      <header className="header">
+        <button className="brand" onClick={() => goTo("home")} aria-label="AURA home">
+          <span>AURA</span>
+          <small>Wellness Spa</small>
+        </button>
+
+        <nav className="desktopNav" aria-label="Main navigation">
+          <button className={page === "home" ? "active" : ""} onClick={() => goTo("home")}>Home</button>
+          {nav.map((item) => (
+            <div className="navItem" key={item}>
+              <button className={page === item.toLowerCase() || (item === "Booking" && page === "bag") ? "active" : ""} onClick={() => goTo(item === "Booking" ? "bag" : item.toLowerCase())}>
+                {item}
+                {MEGA[item] && <ChevronDown size={14} />}
+              </button>
+              {MEGA[item] && <MegaMenu title={item} items={MEGA[item]} goTo={goTo} />}
+            </div>
+          ))}
+        </nav>
+
+        <div className="headerRight">
+          <button className="iconBtn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle theme">
+            {theme === "dark" ? <SunMedium size={18} /> : <Moon size={18} />}
+          </button>
+          <div className="planDropWrap">
+            <button className="bagBtn" onClick={() => goTo("bag")} aria-haspopup="true">
+              <ShoppingBag size={18} />
+              <span>Plan</span>
+              <b>{bagCount}</b>
+            </button>
+            <PlanDropdown goTo={goTo} bagCount={bagCount} bagTotal={bagTotal} />
+          </div>
+          <button className="menuBtn" onClick={() => setMenuOpen(true)} aria-label="Open menu"><Menu size={21} /></button>
+        </div>
+      </header>
+      {menuOpen && <MobileMenu goTo={goTo} close={() => setMenuOpen(false)} />}
+    </>
+  );
+}
+
+
+function PlanDropdown({ goTo, bagCount, bagTotal }) {
+  return (
+    <aside className="planDropdown" aria-label="Plan quick menu">
+      <span className="miniLabel">Quick plan</span>
+      <div className="planSummaryLine">
+        <strong>{bagCount ? `${bagCount} ritual${bagCount > 1 ? "s" : ""}` : "No rituals selected"}</strong>
+        <span>{bagTotal ? money(bagTotal) : "Build your visit"}</span>
+      </div>
+      <button onClick={() => goTo("treatments")}>Browse treatments <ArrowRight size={14} /></button>
+      <button onClick={() => goTo("bag")}>Review spa plan <ArrowRight size={14} /></button>
+      <button onClick={() => goTo("contact")}>Ask concierge <ArrowRight size={14} /></button>
+      <p>Need help choosing? Start with the thermal circuit, then add a massage or private jacuzzi slot.</p>
+    </aside>
+  );
+}
+
+function MegaMenu({ title, items, goTo }) {
+  return (
+    <div className="megaMenu">
+      <div>
+        <span className="miniLabel">{title}</span>
+        {items.map((item) => <button key={item} onClick={() => goTo(title === "Booking" ? "bag" : title.toLowerCase())}>{item}</button>)}
+      </div>
+      <aside>
+        <strong>Signature circuit</strong>
+        <p>Pool → sauna → steam → jacuzzi → recovery lounge.</p>
+        <button onClick={() => goTo("bag")}>Plan a visit</button>
+      </aside>
+    </div>
+  );
+}
+
+function MobileMenu({ goTo, close }) {
+  return (
+    <div className="mobileOverlay">
+      <section className="mobilePanel">
+        <button className="closeBtn" onClick={close}><X /></button>
+        {["home", "treatments", "bag", "about", "gallery", "contact"].map((item) => (
+          <button key={item} onClick={() => goTo(item)}>{item === "bag" ? "booking" : item}</button>
+        ))}
+      </section>
+    </div>
+  );
+}
+
+function Home({ goTo, addToBag, setCategory }) {
+  const featured = TREATMENTS.slice(0, 6);
+  return (
+    <>
+      <section className="editorialHero">
+        <div className="heroText reveal">
+          <p className="miniLabel">Thermal wellness / private rituals</p>
+          <h1>Quiet luxury for recovery.</h1>
+          <p className="heroLead">AURA is a spa retreat built around pools, dry saunas, eucalyptus steam rooms, jacuzzis, massage and slow recovery.</p>
+          <div className="heroActions">
+            <button className="primary" onClick={() => goTo("treatments")}>Shop treatments <ArrowRight size={16} /></button>
+            <button className="secondary" onClick={() => goTo("bag")}>Build a spa day</button>
+          </div>
+        </div>
+        <div className="heroImage reveal">
+          <img src={HERO_IMAGE} alt="AURA pool" />
+          <div className="imageCaption"><span>01</span><strong>Thermal circuit</strong><p>Pool / sauna / steam / jacuzzi</p></div>
+        </div>
+      </section>
+
+      <section className="ssenseStrip reveal">
+        {[
+          ["4", "Facility zones"],
+          ["12", "Curated rituals"],
+          ["4.9", "Guest rating"],
+          ["Daily", "09:00—21:00"]
+        ].map(([big, small]) => <article key={small}><strong>{big}</strong><span>{small}</span></article>)}
+      </section>
+
+      <SectionHeader kicker="Treatments" title="Saunas, pools, jacuzzis and massage" text="Clean editorial layout, less noise, sharper cards and a more fashion-site feeling." />
+      <ProductGrid items={featured} addToBag={addToBag} />
+
+      <section className="splitEditorial reveal">
+        <img src={SAUNA_IMAGE} alt="Dry sauna" />
+        <div>
+          <span className="miniLabel">AURA approach</span>
+          <h2>A spa menu that feels curated, not cluttered.</h2>
+          <p>Instead of looking like a normal service website, the experience is presented like a premium catalogue: high contrast, restrained typography, sharp filters and editorial cards.</p>
+          <button className="underlined" onClick={() => goTo("about")}>Read philosophy</button>
+        </div>
+      </section>
+
+      <section className="categoryRail reveal">
+        {CATEGORIES.filter((c) => c !== "All").map((item) => (
+          <button key={item} onClick={() => { setCategory(item); goTo("treatments"); }}>
+            <span>{item}</span>
+            <ArrowRight size={16} />
+          </button>
+        ))}
+      </section>
+    </>
+  );
+}
+
+function Treatments({ filtered, category, setCategory, query, setQuery, addToBag }) {
+  return (
+    <section className="catalogPage">
+      <aside className="filters reveal">
+        <span className="miniLabel">Catalogue</span>
+        <h1>Treatments</h1>
+        <label className="searchBox"><Search size={16} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search rituals" /></label>
+        <div className="filterList">
+          {CATEGORIES.map((item) => <button key={item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{item}</button>)}
+        </div>
+      </aside>
+      <div className="catalogMain">
+        <div className="catalogTop reveal"><span>{filtered.length} results</span><span><Grid3X3 size={16} /> 3-column editorial grid</span></div>
+        <ProductGrid items={filtered} addToBag={addToBag} />
+      </div>
+    </section>
+  );
+}
+
+function ProductGrid({ items, addToBag }) {
+  return (
+    <div className="productGrid">
+      {items.map((item, index) => (
+        <article className="productCard reveal" key={item.id} style={{ transitionDelay: `${Math.min(index, 8) * 35}ms` }}>
+          <div className="productImage">
+            <img src={item.image} alt={item.name} />
+            <button className="wish"><Heart size={17} /></button>
+            <span>{item.tag}</span>
+          </div>
+          <div className="productInfo">
+            <div>
+              <h3>{item.name}</h3>
+              <p>{item.description}</p>
+            </div>
+            <div className="productMeta">
+              <span>{item.duration}</span>
+              <strong>{money(item.price)}</strong>
+            </div>
+            <button className="addBtn" onClick={() => addToBag(item)}>Add to plan</button>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function Bag({ bag, updateQty, total, goTo }) {
+  return (
+    <section className="bagPage">
+      <div className="bagList reveal">
+        <span className="miniLabel">Booking plan</span>
+        <h1>Your spa day</h1>
+        {!bag.length && <p className="empty">No rituals added yet. Explore treatments to build a spa day.</p>}
+        {bag.map((item) => (
+          <article className="bagItem" key={item.id}>
+            <img src={item.image} alt={item.name} />
+            <div><h3>{item.name}</h3><p>{item.duration} / {item.category}</p></div>
+            <strong>{money(item.price * item.qty)}</strong>
+            <div className="qty"><button onClick={() => updateQty(item.id, -1)}><Minus size={14} /></button><span>{item.qty}</span><button onClick={() => updateQty(item.id, 1)}><Plus size={14} /></button></div>
+          </article>
+        ))}
+      </div>
+      <aside className="summary reveal">
+        <span className="miniLabel">Summary</span>
+        <div><span>Subtotal</span><strong>{money(total)}</strong></div>
+        <div><span>Tea ritual</span><strong>Included</strong></div>
+        <p>Demo checkout: use this as a booking-plan concept, not real payment processing.</p>
+        <button className="primary" onClick={() => goTo("contact")}>Request booking</button>
+      </aside>
+    </section>
+  );
+}
+
+function About() {
+  return (
+    <section className="contentPage reveal">
+      <span className="miniLabel">About AURA</span>
+      <h1>Minimal, quiet and built around recovery.</h1>
+      <p>AURA combines heat, steam, water and bodywork into a calm wellness circuit. The design direction uses editorial spacing, high-contrast typography and product-like treatment cards to feel closer to a luxury retail experience.</p>
+      <div className="textGrid">
+        {['Thermal etiquette', 'Private treatment rooms', 'Botanical products', 'Recovery lounge'].map((item, i) => <article key={item}><span>0{i + 1}</span><h3>{item}</h3><p>Specific details make the spa feel considered, premium and trustworthy.</p></article>)}
+      </div>
+    </section>
+  );
+}
+
+function Gallery() {
+  return (
+    <section className="galleryPage reveal">
+      <SectionHeader kicker="Gallery" title="Spaces with a quiet editorial mood" text="Large image blocks, less decoration, stronger cropping." />
+      {[HERO_IMAGE, SAUNA_IMAGE, STEAM_IMAGE, MASSAGE_IMAGE, FACIAL_IMAGE, LOUNGE_IMAGE].map((img, i) => <img key={img} src={img} alt={`AURA gallery ${i + 1}`} />)}
+    </section>
+  );
+}
+
+function Contact() {
+  return (
+    <section className="contentPage contactPage reveal">
+      <span className="miniLabel">Contact</span>
+      <h1>Request a private treatment.</h1>
+      <p>42 Willow Lane, Sofia Wellness District / +359 88 000 0000 / hello@aurawellness.example</p>
+      <form className="contactForm">
+        <input placeholder="Name" />
+        <input placeholder="Email" />
+        <textarea placeholder="What would you like to book?" rows="5" />
+        <button type="button" className="primary">Send request</button>
+      </form>
+    </section>
+  );
+}
+
+function SectionHeader({ kicker, title, text }) {
+  return <div className="sectionHead reveal"><span className="miniLabel">{kicker}</span><h2>{title}</h2><p>{text}</p></div>;
+}
+
+function Footer({ goTo }) {
+  return (
+    <footer className="footer">
+      <div><strong>AURA</strong><p>Thermal pools, saunas, steam rooms, jacuzzis and massage therapy.</p></div>
+      <div><span>Explore</span><button onClick={() => goTo("treatments")}>Treatments</button><button onClick={() => goTo("bag")}>Booking</button><button onClick={() => goTo("gallery")}>Gallery</button></div>
+      <div><span>Visit</span><p>42 Willow Lane<br />Sofia Wellness District<br />Daily / 09:00—21:00</p></div>
+      <div><span>Contact</span><p>+359 88 000 0000<br />hello@aurawellness.example<br />@aurawellness.spa</p></div>
+    </footer>
+  );
+}
