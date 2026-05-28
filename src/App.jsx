@@ -45,12 +45,42 @@ const MEGA = {
   About: ["Our philosophy", "Thermal etiquette", "Products & rituals"]
 };
 
+const ROUTE_TO_PAGE = {
+  home: "home",
+  treatments: "treatments",
+  booking: "bag",
+  bag: "bag",
+  about: "about",
+  gallery: "gallery",
+  contact: "contact"
+};
+
+const PAGE_TO_ROUTE = {
+  home: "",
+  treatments: "treatments",
+  bag: "booking",
+  about: "about",
+  gallery: "gallery",
+  contact: "contact"
+};
+
+function pageFromUrl() {
+  const raw = window.location.hash.replace(/^#\/?/, "").trim().toLowerCase();
+  return ROUTE_TO_PAGE[raw] || "home";
+}
+
+function urlForPage(page) {
+  const route = PAGE_TO_ROUTE[page] ?? "";
+  const base = `${window.location.pathname}${window.location.search}`;
+  return route ? `${base}#/${route}` : base;
+}
+
 function money(value) {
   return `$${value}`;
 }
 
 export default function App() {
-  const [page, setPage] = useState("home");
+  const [page, setPage] = useState(() => pageFromUrl());
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -96,9 +126,32 @@ export default function App() {
     return () => observer.disconnect();
   }, [page, category]);
 
+  useEffect(() => {
+    const handleNavigation = () => {
+      setPage(pageFromUrl());
+      setMenuOpen(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    window.addEventListener("popstate", handleNavigation);
+    window.addEventListener("hashchange", handleNavigation);
+
+    return () => {
+      window.removeEventListener("popstate", handleNavigation);
+      window.removeEventListener("hashchange", handleNavigation);
+    };
+  }, []);
+
   function goTo(next) {
     setPage(next);
     setMenuOpen(false);
+
+    const nextUrl = urlForPage(next);
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (nextUrl !== currentUrl) {
+      window.history.pushState({ page: next }, "", nextUrl);
+    }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
