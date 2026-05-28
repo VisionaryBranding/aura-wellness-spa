@@ -72,7 +72,7 @@ const MEGA = {
     { label: "Couples ritual", page: "treatments", query: "Couples" }
   ],
   About: [
-    { label: "Philosophy", page: "about" },
+    { label: "Philosophy", page: "about", anchor: "philosophy" },
     { label: "Thermal etiquette", page: "about", anchor: "etiquette" },
     { label: "Products & rituals", page: "about", anchor: "rituals" }
   ]
@@ -99,13 +99,32 @@ const PAGE_TO_ROUTE = {
 
 function pageFromUrl() {
   const raw = window.location.hash.replace(/^#\/?/, "").trim().toLowerCase();
-  return ROUTE_TO_PAGE[raw] || "home";
+  const [route] = raw.split("/");
+  return ROUTE_TO_PAGE[route] || "home";
 }
 
-function urlForPage(page) {
+function anchorFromUrl() {
+  const raw = window.location.hash.replace(/^#\/?/, "").trim().toLowerCase();
+  const [, anchor] = raw.split("/");
+  return anchor || "";
+}
+
+function urlForPage(page, anchor = "") {
   const route = PAGE_TO_ROUTE[page] ?? "";
   const base = `${window.location.pathname}${window.location.search}`;
-  return route ? `${base}#/${route}` : base;
+  if (!route) return base;
+  return anchor ? `${base}#/${route}/${anchor}` : `${base}#/${route}`;
+}
+
+function scrollToAnchor(anchor) {
+  if (!anchor) return;
+  window.setTimeout(() => {
+    const target = document.getElementById(anchor);
+    if (!target) return;
+    const headerOffset = 108;
+    const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+    window.scrollTo({ top, behavior: "smooth" });
+  }, 80);
 }
 
 function money(value) {
@@ -169,9 +188,12 @@ export default function App() {
 
   useEffect(() => {
     const handleNavigation = () => {
-      setPage(pageFromUrl());
+      const nextPage = pageFromUrl();
+      const nextAnchor = anchorFromUrl();
+      setPage(nextPage);
       setMenuOpen(false);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (nextAnchor) scrollToAnchor(nextAnchor);
+      else window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     window.addEventListener("popstate", handleNavigation);
@@ -190,11 +212,12 @@ export default function App() {
     setPage(next);
     setMenuOpen(false);
 
-    const nextUrl = urlForPage(next);
+    const nextUrl = urlForPage(next, options.anchor || "");
     const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-    if (nextUrl !== currentUrl) window.history.pushState({ page: next }, "", nextUrl);
+    if (nextUrl !== currentUrl) window.history.pushState({ page: next, anchor: options.anchor || "" }, "", nextUrl);
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (options.anchor) scrollToAnchor(options.anchor);
+    else window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function addToBag(item) {
@@ -317,7 +340,8 @@ function MegaMenu({ title, items, goTo }) {
     goTo(item.page, {
       category: item.category,
       query: item.query ?? "",
-      clearSearch: item.page === "treatments" && !item.query
+      clearSearch: item.page === "treatments" && !item.query,
+      anchor: item.anchor
     });
   }
 
@@ -504,7 +528,7 @@ function Bag({ bag, updateQty, total, goTo }) {
 
 function About() {
   return (
-    <section className="contentPage reveal">
+    <section id="philosophy" className="contentPage reveal">
       <span className="miniLabel">About AURA</span>
       <h1>Minimal, quiet and built around recovery.</h1>
       <p>AURA combines heat, steam, water and bodywork into a calm wellness circuit. The design direction uses editorial spacing, high-contrast typography and product-like treatment cards to feel closer to a luxury retail experience.</p>
