@@ -15,6 +15,7 @@
 }
 
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 html, body { margin: 0; scrollbar-width: none; -ms-overflow-style: none; }
 html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar { width: 0; height: 0; display: none; }
 body {
@@ -79,7 +80,7 @@ img { display: block; max-width: 100%; }
 .glassPanel strong { font-size:18px; line-height:1; }
 .panelSauna{left:34px;top:34px}.panelSteam{right:34px;top:42%}.panelJacuzzi{left:50%;bottom:34px;transform:translateX(-50%)}
 
-.statsPanel { margin:-60px auto 80px; position:relative; z-index:5; background:var(--surface); border:1px solid var(--line); border-radius:32px; box-shadow:var(--shadow); display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden; }
+.statsPanel { margin:32px auto 90px; position:relative; z-index:5; background:var(--surface); border:1px solid var(--line); border-radius:32px; box-shadow:var(--shadow); display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden; }
 .statsPanel article { padding:30px; border-right:1px solid var(--line); }
 .statsPanel article:last-child { border-right:0; }
 .statsPanel strong { display:block; font-size:44px; line-height:1; letter-spacing:-.08em; color:var(--sage-dark); }
@@ -213,5 +214,5 @@ img { display: block; max-width: 100%; }
 .stagger > *:nth-child(2){animation-delay:.04s}.stagger > *:nth-child(3){animation-delay:.08s}.stagger > *:nth-child(4){animation-delay:.12s}.stagger > *:nth-child(5){animation-delay:.16s}.stagger > *:nth-child(6){animation-delay:.20s}.stagger > *:nth-child(7){animation-delay:.24s}.stagger > *:nth-child(8){animation-delay:.28s}.stagger > *:nth-child(9){animation-delay:.32s}.stagger > *:nth-child(10){animation-delay:.36s}.stagger > *:nth-child(11){animation-delay:.40s}.stagger > *:nth-child(12){animation-delay:.44s}.stagger > *:nth-child(13){animation-delay:.48s}.stagger > *:nth-child(14){animation-delay:.52s}.stagger > *:nth-child(15){animation-delay:.56s}
 
 @media (max-width:1180px){.heroGrid,.splitFeature,.detailLayout,.aboutLayout,.bookingLayout,.contactLayout{grid-template-columns:1fr}.treatmentGrid,.treatmentGrid.full{grid-template-columns:repeat(2,1fr)}.zoneGrid{grid-template-columns:1fr}.saunaFeaturePanel{grid-template-columns:1fr}.saunaFeatureImage{position:relative;top:auto;min-height:560px}.saunaFeatureImage img{min-height:560px}}
-@media (max-width:820px){.desktopNav{display:none}.mobileButton{display:inline-flex}.heroGrid{min-height:auto;padding:90px 0;}.hero{min-height:auto}.statsPanel{grid-template-columns:repeat(2,1fr);margin-top:30px}.saunaTypeGrid{grid-template-columns:repeat(2,1fr)}.packageGrid,.values{grid-template-columns:1fr}.toolbar{align-items:stretch;flex-direction:column}.searchBox{width:100%}.footerGrid{grid-template-columns:1fr 1fr}.topNotice{display:none}.container{width:min(100% - 28px, 1480px)}}
+@media (max-width:820px){.desktopNav{display:none}.mobileButton{display:inline-flex}.heroGrid{min-height:auto;padding:90px 0;}.hero{min-height:auto}.statsPanel{grid-template-columns:repeat(2,1fr);margin-top:24px;margin-bottom:60px}.saunaTypeGrid{grid-template-columns:repeat(2,1fr)}.packageGrid,.values{grid-template-columns:1fr}.toolbar{align-items:stretch;flex-direction:column}.searchBox{width:100%}.footerGrid{grid-template-columns:1fr 1fr}.topNotice{display:none}.container{width:min(100% - 28px, 1480px)}}
 @media (max-width:560px){.hero h1,.pageHero h1{font-size:54px}.treatmentGrid,.treatmentGrid.full,.saunaTypeGrid{grid-template-columns:1fr}.statsPanel{grid-template-columns:1fr}.formGrid{grid-template-columns:1fr}.bookingItem{grid-template-columns:96px 1fr}.bookingItem img{width:96px;height:90px}.qty{grid-column:1/-1}.galleryGrid{columns:1}.footerGrid{grid-template-columns:1fr}.saunaFeatureOverlay{left:22px;right:22px;bottom:22px}}
