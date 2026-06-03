@@ -24,54 +24,75 @@ import {
   X
 } from "lucide-react";
 
-const FALLBACK = "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1600&q=85";
+const IMG = {
+  finnish: "https://images.unsplash.com/photo-1717356495389-6ab1e5ff9d84?auto=format&fit=crop&w=1600&q=85",
+  wood: "https://images.unsplash.com/photo-1728404259075-209cfb5bb89c?auto=format&fit=crop&w=1600&q=85",
+  electric: "https://images.unsplash.com/photo-1678988227223-45112511eca2?auto=format&fit=crop&w=1600&q=85",
+  infrared: "https://images.unsplash.com/photo-1678988227223-45112511eca2?auto=format&fit=crop&w=1600&q=85",
+  smoke: "https://images.unsplash.com/photo-1759302354553-cf87ceb9135c?auto=format&fit=crop&w=1600&q=85",
+  steam: "https://images.unsplash.com/photo-1739869481946-c054e37a55b1?auto=format&fit=crop&w=1600&q=85",
+  bio: "https://images.unsplash.com/photo-1712659606957-b7395ba9ebb2?auto=format&fit=crop&w=1600&q=85",
+  aroma: "https://images.unsplash.com/photo-1676452458169-318fd3b9a98f?auto=format&fit=crop&w=1600&q=85",
+  herbal: "https://images.unsplash.com/photo-1741601274210-14b7ab1ef99c?auto=format&fit=crop&w=1600&q=85",
+  salt: "https://images.unsplash.com/photo-1755610146367-cc6cac6d6f8a?auto=format&fit=crop&w=1600&q=85",
+  barrel: "https://images.unsplash.com/photo-1759302354886-f2c37dd3dd8c?auto=format&fit=crop&w=1600&q=85",
+  panoramic: "https://images.unsplash.com/photo-1759302353458-3c617bfd428b?auto=format&fit=crop&w=1600&q=85",
+  banya: "https://images.unsplash.com/photo-1739869481946-c054e37a55b1?auto=format&fit=crop&w=1600&q=85",
+  hammam: "https://images.unsplash.com/photo-1755610146367-cc6cac6d6f8a?auto=format&fit=crop&w=1600&q=85",
+  jjimjilbang: "https://images.unsplash.com/photo-1678988227223-45112511eca2?auto=format&fit=crop&w=1600&q=85",
+  pool: "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?auto=format&fit=crop&w=1600&q=85",
+  jacuzzi: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=1600&q=85",
+  massage: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1600&q=85",
+  facial: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1600&q=85",
+  spa: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1600&q=85"
+};
 
-const saunaImage = (query) => `https://source.unsplash.com/1400x1000/?${query}`;
+const FALLBACK = IMG.finnish;
 
 const SAUNA_TYPES = [
-  { id: "finnish", name: "Traditional Finnish Sauna", category: "Classic", temp: "80–100°C · dry heat", vibe: "Classic cedar heat, hot stones, löyly steam and deep sweating.", image: saunaImage("finnish-sauna,wood-sauna") },
-  { id: "wood", name: "Wood-Burning Sauna", category: "Classic", temp: "75–95°C · fire-heated", vibe: "Rustic heat from a real stove with cabin energy and soft smoke notes.", image: saunaImage("wood-burning-sauna,cabin-sauna") },
-  { id: "electric", name: "Electric Sauna", category: "Modern", temp: "70–95°C · controlled dry heat", vibe: "Clean, reliable and easy to control for a premium city spa setup.", image: saunaImage("modern-sauna,electric-sauna") },
-  { id: "infrared", name: "Infrared Sauna", category: "Recovery", temp: "45–60°C · radiant warmth", vibe: "Lower air temperature with a gentler recovery-focused warmth.", image: saunaImage("infrared-sauna,wellness") },
-  { id: "smoke", name: "Smoke Sauna", category: "Traditional", temp: "70–90°C · old-world ritual", vibe: "Traditional chimneyless heat, aired before use for a deep smoky atmosphere.", image: saunaImage("smoke-sauna,traditional-sauna") },
-  { id: "steam", name: "Steam Room", category: "Steam", temp: "40–50°C · high humidity", vibe: "Soft misty heat for breathing, skin softness and slow decompression.", image: saunaImage("steam-room,spa") },
-  { id: "bio", name: "Bio Sauna", category: "Gentle", temp: "50–65°C · gentle humidity", vibe: "A softer sauna for guests who want warmth without maximum intensity.", image: saunaImage("bio-sauna,relaxation-room") },
-  { id: "aroma", name: "Aromatherapy Sauna", category: "Botanical", temp: "60–80°C · essential oils", vibe: "Dry heat paired with eucalyptus, lavender, cedar or citrus aromatics.", image: saunaImage("aromatherapy-sauna,eucalyptus-spa") },
-  { id: "herbal", name: "Herbal Sauna", category: "Botanical", temp: "50–75°C · herbal vapor", vibe: "Botanical steam and warm air create a calmer ritual-style heat room.", image: saunaImage("herbal-sauna,botanical-spa") },
-  { id: "salt", name: "Salt Sauna", category: "Mineral", temp: "45–70°C · mineral atmosphere", vibe: "Salt walls or salt air create a clean mineral spa atmosphere.", image: saunaImage("salt-sauna,salt-room") },
-  { id: "barrel", name: "Barrel Sauna", category: "Outdoor", temp: "70–95°C · outdoor heat", vibe: "A compact outdoor sauna with a curved wooden shape and cozy heat.", image: saunaImage("barrel-sauna,outdoor-sauna") },
-  { id: "panoramic", name: "Panoramic Sauna", category: "Luxury", temp: "70–90°C · scenic view", vibe: "Large glass views, quiet heat and a more premium visual experience.", image: saunaImage("panoramic-sauna,glass-sauna") },
-  { id: "banya", name: "Russian Banya", category: "Cultural", temp: "70–100°C · steam ritual", vibe: "Hot humid sessions often paired with venik branch rituals and cool resets.", image: saunaImage("russian-banya,steam-bath") },
-  { id: "hammam", name: "Turkish Hammam", category: "Cultural", temp: "40–50°C · bathing ritual", vibe: "Steam, warm stone, washing and body polish inside a tiled chamber.", image: saunaImage("turkish-hammam,spa") },
-  { id: "jjimjilbang", name: "Korean Jjimjilbang", category: "Cultural", temp: "45–90°C · themed rooms", vibe: "Korean bathhouse culture with kiln rooms, heated floors and social recovery.", image: saunaImage("korean-sauna,jjimjilbang") }
+  { id: "finnish", name: "Traditional Finnish Sauna", category: "Classic", temp: "80–100°C · dry heat", vibe: "Classic cedar heat, hot stones, löyly steam and deep sweating.", image: IMG.finnish },
+  { id: "wood", name: "Wood-Burning Sauna", category: "Classic", temp: "75–95°C · fire-heated", vibe: "Rustic heat from a real stove with cabin energy and soft smoke notes.", image: IMG.wood },
+  { id: "electric", name: "Electric Sauna", category: "Modern", temp: "70–95°C · controlled dry heat", vibe: "Clean, reliable and easy to control for a premium city spa setup.", image: IMG.electric },
+  { id: "infrared", name: "Infrared Sauna", category: "Recovery", temp: "45–60°C · radiant warmth", vibe: "Lower air temperature with a gentler recovery-focused warmth.", image: IMG.infrared },
+  { id: "smoke", name: "Smoke Sauna", category: "Traditional", temp: "70–90°C · old-world ritual", vibe: "Traditional chimneyless heat, aired before use for a deep smoky atmosphere.", image: IMG.smoke },
+  { id: "steam", name: "Steam Room", category: "Steam", temp: "40–50°C · high humidity", vibe: "Soft misty heat for breathing, skin softness and slow decompression.", image: IMG.steam },
+  { id: "bio", name: "Bio Sauna", category: "Gentle", temp: "50–65°C · gentle humidity", vibe: "A softer sauna for guests who want warmth without maximum intensity.", image: IMG.bio },
+  { id: "aroma", name: "Aromatherapy Sauna", category: "Botanical", temp: "60–80°C · essential oils", vibe: "Dry heat paired with eucalyptus, lavender, cedar or citrus aromatics.", image: IMG.aroma },
+  { id: "herbal", name: "Herbal Sauna", category: "Botanical", temp: "50–75°C · herbal vapor", vibe: "Botanical steam and warm air create a calmer ritual-style heat room.", image: IMG.herbal },
+  { id: "salt", name: "Salt Sauna", category: "Mineral", temp: "45–70°C · mineral atmosphere", vibe: "Salt walls or salt air create a clean mineral spa atmosphere.", image: IMG.salt },
+  { id: "barrel", name: "Barrel Sauna", category: "Outdoor", temp: "70–95°C · outdoor heat", vibe: "A compact outdoor sauna with a curved wooden shape and cozy heat.", image: IMG.barrel },
+  { id: "panoramic", name: "Panoramic Sauna", category: "Luxury", temp: "70–90°C · scenic view", vibe: "Large glass views, quiet heat and a more premium visual experience.", image: IMG.panoramic },
+  { id: "banya", name: "Russian Banya", category: "Cultural", temp: "70–100°C · steam ritual", vibe: "Hot humid sessions often paired with venik branch rituals and cool resets.", image: IMG.banya },
+  { id: "hammam", name: "Turkish Hammam", category: "Cultural", temp: "40–50°C · bathing ritual", vibe: "Steam, warm stone, washing and body polish inside a tiled chamber.", image: IMG.hammam },
+  { id: "jjimjilbang", name: "Korean Jjimjilbang", category: "Cultural", temp: "45–90°C · themed rooms", vibe: "Korean bathhouse culture with kiln rooms, heated floors and social recovery.", image: IMG.jjimjilbang }
 ];
 
 const TREATMENTS = [
-  { id: 1, name: "Thermal Spa Day Pass", category: "Thermal", price: 95, duration: "3 hours", badge: "Spa access", image: "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?auto=format&fit=crop&w=1400&q=85", description: "Access to the indoor pool, steam room, dry sauna, jacuzzi and recovery lounge.", includes: ["Indoor pool", "Steam room", "Dry sauna", "Jacuzzi"] },
-  { id: 2, name: "Finnish Dry Sauna", category: "Sauna", price: 55, duration: "35 min", badge: "Classic heat", image: saunaImage("finnish-sauna,wood-sauna"), description: "A classic dry heat room designed for deep warmth, sweating and quiet decompression.", includes: ["Dry heat", "Cedar room", "Cold towels", "Mineral water"] },
-  { id: 3, name: "Nordic Sauna Circuit", category: "Sauna", price: 90, duration: "55 min", badge: "Heat therapy", image: saunaImage("nordic-sauna,sauna") , description: "A guided heat ritual with dry sauna, cool towel reset and mineral hydration.", includes: ["Dry sauna", "Cold towels", "Recovery lounge", "Mineral water"] },
-  { id: 4, name: "Panoramic Sauna Suite", category: "Sauna", price: 115, duration: "60 min", badge: "Private view", image: saunaImage("panoramic-sauna,glass-sauna"), description: "A private sauna room with soft lighting, towels, water service and quiet seating.", includes: ["Private sauna", "Robe service", "Quiet seating", "Hydration"] },
-  { id: 5, name: "Herbal Aroma Sauna", category: "Sauna", price: 75, duration: "45 min", badge: "Botanical heat", image: saunaImage("aromatherapy-sauna,eucalyptus-spa"), description: "Warm dry heat paired with rosemary, eucalyptus and cedar aromatics.", includes: ["Herbal aroma", "Dry sauna", "Cool towel", "Tea"] },
-  { id: 6, name: "Infrared Recovery Sauna", category: "Sauna", price: 80, duration: "40 min", badge: "Recovery", image: saunaImage("infrared-sauna,recovery"), description: "Lower-temperature heat designed for muscle relaxation and post-workout recovery.", includes: ["Infrared heat", "Recovery towels", "Mineral water", "Quiet room"] },
-  { id: 7, name: "Eucalyptus Steam Room", category: "Steam", price: 60, duration: "30 min", badge: "Breathing ritual", image: saunaImage("steam-room,eucalyptus-spa"), description: "Warm eucalyptus mist for breathing, skin softness and slow decompression.", includes: ["Eucalyptus mist", "Steam room", "Cold towels", "Hydration"] },
-  { id: 8, name: "Hammam Body Polish", category: "Steam", price: 135, duration: "75 min", badge: "Steam ritual", image: saunaImage("turkish-hammam,spa"), description: "Steam, black soap cleanse, full-body polish and warm rinse for a clean spa reset.", includes: ["Steam room", "Body polish", "Warm rinse", "Body oil"] },
-  { id: 9, name: "Salt Steam Chamber", category: "Steam", price: 70, duration: "35 min", badge: "Mineral mist", image: saunaImage("salt-room,spa"), description: "A mineral steam experience with soft salt air and gentle heat.", includes: ["Salt steam", "Warm mist", "Quiet room", "Mineral water"] },
-  { id: 10, name: "Private Jacuzzi Suite", category: "Jacuzzi", price: 160, duration: "75 min", badge: "Private soak", image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=1400&q=85", description: "Private warm-water hydrotherapy with low light, robe service and calm seating.", includes: ["Private jacuzzi", "Robe service", "Low lighting", "Mineral water"] },
-  { id: 11, name: "Indoor Thermal Pool", category: "Pool", price: 70, duration: "90 min", badge: "Pool access", image: "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?auto=format&fit=crop&w=1400&q=85", description: "Warm indoor pool access with soft lighting, towels and poolside loungers.", includes: ["Indoor pool", "Loungers", "Towels", "Water service"] },
-  { id: 12, name: "Deep Calm Massage", category: "Massage", price: 115, duration: "60 min", badge: "Tension relief", image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1400&q=85", description: "Slow pressure, breath-led pacing and warm oil to release shoulders, back and nervous system tension.", includes: ["Deep pressure", "Warm oil", "Neck focus", "Quiet room"] },
-  { id: 13, name: "Botanical Glow Facial", category: "Facials", price: 130, duration: "70 min", badge: "Glow", image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1400&q=85", description: "A hydrating facial with sculpting massage, botanical masks and a luminous calming finish.", includes: ["Cleanse", "Sculpting massage", "Hydration mask", "SPF finish"] },
-  { id: 14, name: "Full Wellness Escape", category: "Thermal", price: 310, duration: "Half day", badge: "Complete day", image: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1400&q=85", description: "Pool, sauna, jacuzzi, steam room, massage and facial combined into one premium spa escape.", includes: ["Pool access", "Sauna circuit", "Massage", "Facial"] }
+  { id: 1, name: "Thermal Spa Day Pass", category: "Thermal", price: 95, duration: "3 hours", badge: "Spa access", image: IMG.pool, description: "Access to the indoor pool, steam room, dry sauna, jacuzzi and recovery lounge.", includes: ["Indoor pool", "Steam room", "Dry sauna", "Jacuzzi"] },
+  { id: 2, name: "Finnish Dry Sauna", category: "Sauna", price: 55, duration: "35 min", badge: "Classic heat", image: IMG.finnish, description: "A classic dry heat room designed for deep warmth, sweating and quiet decompression.", includes: ["Dry heat", "Cedar room", "Cold towels", "Mineral water"] },
+  { id: 3, name: "Nordic Sauna Circuit", category: "Sauna", price: 90, duration: "55 min", badge: "Heat therapy", image: IMG.finnish , description: "A guided heat ritual with dry sauna, cool towel reset and mineral hydration.", includes: ["Dry sauna", "Cold towels", "Recovery lounge", "Mineral water"] },
+  { id: 4, name: "Panoramic Sauna Suite", category: "Sauna", price: 115, duration: "60 min", badge: "Private view", image: IMG.panoramic, description: "A private sauna room with soft lighting, towels, water service and quiet seating.", includes: ["Private sauna", "Robe service", "Quiet seating", "Hydration"] },
+  { id: 5, name: "Herbal Aroma Sauna", category: "Sauna", price: 75, duration: "45 min", badge: "Botanical heat", image: IMG.aroma, description: "Warm dry heat paired with rosemary, eucalyptus and cedar aromatics.", includes: ["Herbal aroma", "Dry sauna", "Cool towel", "Tea"] },
+  { id: 6, name: "Infrared Recovery Sauna", category: "Sauna", price: 80, duration: "40 min", badge: "Recovery", image: IMG.infrared, description: "Lower-temperature heat designed for muscle relaxation and post-workout recovery.", includes: ["Infrared heat", "Recovery towels", "Mineral water", "Quiet room"] },
+  { id: 7, name: "Eucalyptus Steam Room", category: "Steam", price: 60, duration: "30 min", badge: "Breathing ritual", image: IMG.steam, description: "Warm eucalyptus mist for breathing, skin softness and slow decompression.", includes: ["Eucalyptus mist", "Steam room", "Cold towels", "Hydration"] },
+  { id: 8, name: "Hammam Body Polish", category: "Steam", price: 135, duration: "75 min", badge: "Steam ritual", image: IMG.hammam, description: "Steam, black soap cleanse, full-body polish and warm rinse for a clean spa reset.", includes: ["Steam room", "Body polish", "Warm rinse", "Body oil"] },
+  { id: 9, name: "Salt Steam Chamber", category: "Steam", price: 70, duration: "35 min", badge: "Mineral mist", image: IMG.salt, description: "A mineral steam experience with soft salt air and gentle heat.", includes: ["Salt steam", "Warm mist", "Quiet room", "Mineral water"] },
+  { id: 10, name: "Private Jacuzzi Suite", category: "Jacuzzi", price: 160, duration: "75 min", badge: "Private soak", image: IMG.jacuzzi, description: "Private warm-water hydrotherapy with low light, robe service and calm seating.", includes: ["Private jacuzzi", "Robe service", "Low lighting", "Mineral water"] },
+  { id: 11, name: "Indoor Thermal Pool", category: "Pool", price: 70, duration: "90 min", badge: "Pool access", image: IMG.pool, description: "Warm indoor pool access with soft lighting, towels and poolside loungers.", includes: ["Indoor pool", "Loungers", "Towels", "Water service"] },
+  { id: 12, name: "Deep Calm Massage", category: "Massage", price: 115, duration: "60 min", badge: "Tension relief", image: IMG.massage, description: "Slow pressure, breath-led pacing and warm oil to release shoulders, back and nervous system tension.", includes: ["Deep pressure", "Warm oil", "Neck focus", "Quiet room"] },
+  { id: 13, name: "Botanical Glow Facial", category: "Facials", price: 130, duration: "70 min", badge: "Glow", image: IMG.facial, description: "A hydrating facial with sculpting massage, botanical masks and a luminous calming finish.", includes: ["Cleanse", "Sculpting massage", "Hydration mask", "SPF finish"] },
+  { id: 14, name: "Full Wellness Escape", category: "Thermal", price: 310, duration: "Half day", badge: "Complete day", image: IMG.spa, description: "Pool, sauna, jacuzzi, steam room, massage and facial combined into one premium spa escape.", includes: ["Pool access", "Sauna circuit", "Massage", "Facial"] }
 ];
 
 const CATEGORIES = ["All", "Thermal", "Sauna", "Steam", "Jacuzzi", "Pool", "Massage", "Facials"];
 
 const GALLERY = [
-  "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=85",
-  saunaImage("luxury-sauna,spa"),
-  "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=85",
-  "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1200&q=85",
-  saunaImage("steam-room,hammam"),
-  saunaImage("outdoor-barrel-sauna")
+  IMG.finnish,
+  IMG.panoramic,
+  IMG.steam,
+  IMG.facial,
+  IMG.hammam,
+  IMG.barrel
 ];
 
 export default function App() {
@@ -237,7 +258,7 @@ function BookingPage({ booking, total, updateQty, goTo }) {
   return <div className="container pagePad"><PageHero eyebrow="Booking" title="Plan your visit." text="This is a portfolio demo booking flow. Select services and review your estimated appointment plan." />{booking.length === 0 ? <div className="emptyState"><CalendarDays size={48} /><h2>No treatments selected yet.</h2><p>Browse treatments and add a service to your plan.</p><button className="primaryBtn" onClick={() => goTo("treatments")}>Explore treatments</button></div> : <section className="bookingLayout reveal"><div className="bookingList">{booking.map((item) => <article className="bookingItem" key={item.id}><img src={item.image} alt={item.name} onError={(e) => { e.currentTarget.src = FALLBACK; }} /><div><h3>{item.name}</h3><p>{item.duration} · ${item.price}</p></div><div className="qty"><button onClick={() => updateQty(item.id, -1)}><Minus size={15} /></button><strong>{item.qty}</strong><button onClick={() => updateQty(item.id, 1)}><Plus size={15} /></button></div></article>)}</div><aside className="bookingSummary"><h3>Appointment summary</h3><div><span>Services</span><strong>${total}</strong></div><div><span>Guest tea ritual</span><strong>Included</strong></div><div><span>Deposit due today</span><strong>${Math.round(total * 0.25)}</strong></div><div className="summaryTotal"><span>Estimated total</span><strong>${total}</strong></div><button className="primaryBtn">Reserve demo</button><p>No payment is processed. This is a portfolio booking demo.</p></aside></section>}<section className="bookingForm reveal"><h2>Preferred appointment details</h2><div className="formGrid"><Field label="Name" placeholder="Your name" /><Field label="Email" placeholder="you@example.com" /><Field label="Preferred date" placeholder="Friday, June 14" /><Field label="Preferred time" placeholder="6:30 PM" /></div><label className="field"><span>Notes</span><textarea rows="6" placeholder="Tell us about pressure preference, allergies, pregnancy, injuries, or anything we should know." /></label></section></div>;
 }
 
-function AboutPage() { return <div className="container pagePad"><PageHero eyebrow="About" title="A sanctuary made for slower days." /><section className="aboutLayout reveal"><div><h2>Wellness without the noise.</h2><p>AURA was created as a calm escape from fast schedules, loud spaces and rushed self-care.</p><p>Every room is quiet, every treatment adapts to the guest, and every visit ends with space to rest before returning outside.</p></div><img src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1600&q=85" alt="Spa treatment" onError={(e) => { e.currentTarget.src = FALLBACK; }} /></section><div className="values stagger"><Value icon={Leaf} title="Natural materials" text="Soft textiles, warm stone, botanical oils and calming aromas." /><Value icon={Sparkles} title="Personalized rituals" text="Treatments adapt to pressure preference, mood and recovery needs." /><Value icon={Waves} title="Recovery first" text="Heat, breath, touch and rest are combined for nervous system reset." /></div></div>; }
+function AboutPage() { return <div className="container pagePad"><PageHero eyebrow="About" title="A sanctuary made for slower days." /><section className="aboutLayout reveal"><div><h2>Wellness without the noise.</h2><p>AURA was created as a calm escape from fast schedules, loud spaces and rushed self-care.</p><p>Every room is quiet, every treatment adapts to the guest, and every visit ends with space to rest before returning outside.</p></div><img src={IMG.spa} alt="Spa treatment" onError={(e) => { e.currentTarget.src = FALLBACK; }} /></section><div className="values stagger"><Value icon={Leaf} title="Natural materials" text="Soft textiles, warm stone, botanical oils and calming aromas." /><Value icon={Sparkles} title="Personalized rituals" text="Treatments adapt to pressure preference, mood and recovery needs." /><Value icon={Waves} title="Recovery first" text="Heat, breath, touch and rest are combined for nervous system reset." /></div></div>; }
 function GalleryPage() { return <div className="container pagePad"><PageHero eyebrow="Gallery" title="Quiet rooms, warm textures, softer light." /><div className="galleryGrid stagger">{GALLERY.map((image, index) => <img key={image} src={image} alt={`AURA gallery ${index + 1}`} onError={(e) => { e.currentTarget.src = FALLBACK; }} />)}</div></div>; }
 function ContactPage() { return <div className="container pagePad"><PageHero eyebrow="Contact" title="Visit, call, or plan a private spa day." /><section className="contactLayout reveal"><div className="contactCards stagger"><ContactCard icon={MapPin} title="Address" text="42 Willow Lane, Sofia Wellness District" /><ContactCard icon={Phone} title="Phone" text="+359 88 000 0000" /><ContactCard icon={Mail} title="Email" text="hello@aurawellness.example" /><ContactCard icon={Clock} title="Hours" text="Daily · 9 AM - 9 PM" /></div><form className="contactForm"><Field label="Name" placeholder="Your name" /><Field label="Email" placeholder="you@example.com" /><Field label="Subject" placeholder="Booking, group visit, private event." /><label className="field"><span>Message</span><textarea rows="7" placeholder="How can we help?" /></label><button type="button" className="primaryBtn">Send message</button></form></section></div>; }
 function SectionHead({ eyebrow, title, text }) { return <div className="sectionHead reveal"><div className="eyebrow">{eyebrow}</div><h2>{title}</h2>{text && <p>{text}</p>}</div>; }
