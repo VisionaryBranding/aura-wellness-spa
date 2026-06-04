@@ -1,710 +1,490 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
 
 const images = {
-  hero: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1800&q=80',
-  saunaInterior: 'https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?auto=format&fit=crop&w=1600&q=80',
+  hero: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=2000&q=80',
+  sauna: 'https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?auto=format&fit=crop&w=1600&q=80',
   stoneSauna: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1600&q=80',
   steam: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1600&q=80',
   pool: 'https://images.unsplash.com/photo-1572331165267-854da2b10ccc?auto=format&fit=crop&w=1600&q=80',
-  plungePool: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80',
+  plunge: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80',
   jacuzzi: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1600&q=80',
   massage: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1600&q=80',
   facial: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1600&q=80',
-  lounge: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1600&q=80',
-  suite: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80',
+  suite: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1600&q=80',
+  lounge: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80',
   outdoor: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80',
 };
 
-const announcements = [
-  'AURA THERMAL HOUSE · SOFIA',
-  'SAUNA · STEAM · POOL · BODY RITUALS',
-  'PRIVATE SUITES · BY APPOINTMENT',
-  'SHARP EDITORIAL REDESIGN',
-];
-
-const categories = ['All', 'Thermal', 'Sauna', 'Steam', 'Pool', 'Jacuzzi', 'Massage', 'Facials'];
-
-const saunaItems = [
+const experiences = [
   {
-    id: 1,
-    title: 'Finnish Heat Room',
-    category: 'Sauna',
-    tag: 'Classic dry heat',
-    temp: '80–100°C',
-    description: 'A cedar-lined room built around hot stones, low light and a slower, cleaner heat ritual.',
-    image: images.saunaInterior,
+    id: '01',
+    title: 'Finnish Sauna',
+    sub: 'Dry heat / cedar room',
+    desc: 'Deep timber heat, hot stones and a clean Nordic ritual focused on contrast and breathing.',
+    image: images.sauna,
   },
   {
-    id: 2,
-    title: 'Stone Heater Sauna',
-    category: 'Sauna',
-    tag: 'Nordic ritual',
-    temp: '75–95°C',
-    description: 'A sharper, more architectural sauna focused on stones, timber lines and controlled steam bursts.',
+    id: '02',
+    title: 'Stone Heater Room',
+    sub: 'Heritage heat / steam bursts',
+    desc: 'A more dramatic sauna experience with darker materials and stronger thermal contrast.',
     image: images.stoneSauna,
   },
   {
-    id: 3,
+    id: '03',
     title: 'Steam Chamber',
-    category: 'Steam',
-    tag: 'Soft humidity',
-    temp: '40–50°C',
-    description: 'Warm humidity, eucalyptus atmosphere and a gentler reset after intense heat.',
+    sub: 'Humidity / eucalyptus air',
+    desc: 'Warm mist, low light and a softer heat route for recovery after high-temperature sessions.',
     image: images.steam,
   },
   {
-    id: 4,
-    title: 'Indoor Recovery Pool',
-    category: 'Pool',
-    tag: 'Warm water',
-    temp: '34°C',
-    description: 'A calm interior pool for contrast therapy, slow floating and post-sauna recovery.',
+    id: '04',
+    title: 'Thermal Pool',
+    sub: 'Warm water / floating recovery',
+    desc: 'A quiet recovery pool built for slower movement, decompression and post-heat reset.',
     image: images.pool,
   },
   {
-    id: 5,
-    title: 'Cold Plunge Basin',
-    category: 'Pool',
-    tag: 'Contrast dip',
-    temp: '8–14°C',
-    description: 'A colder, sharper recovery tool used between heat rounds for thermal contrast.',
-    image: images.plungePool,
+    id: '05',
+    title: 'Cold Plunge',
+    sub: 'Contrast / shock recovery',
+    desc: 'A sharper cold-water intervention used between heat stages for clarity and contrast.',
+    image: images.plunge,
   },
   {
-    id: 6,
-    title: 'Hydrotherapy Jacuzzi',
-    category: 'Jacuzzi',
-    tag: 'Pressure jets',
-    temp: '36–38°C',
-    description: 'Private or shared bubbling recovery with body pressure relief and warm water calm.',
+    id: '06',
+    title: 'Hydro Jacuzzi',
+    sub: 'Pressure jets / soak',
+    desc: 'Warm, bubbling hydrotherapy designed to relax legs, lower back and shoulders.',
     image: images.jacuzzi,
   },
   {
-    id: 7,
-    title: 'Deep Tissue Massage',
-    category: 'Massage',
-    tag: 'Hands-on reset',
-    temp: '50 min',
-    description: 'A performance-focused massage ritual targeting shoulders, legs and lower back tension.',
+    id: '07',
+    title: 'Body Massage',
+    sub: 'Hands-on / tissue release',
+    desc: 'A performance-oriented massage ritual aimed at tension, posture and fatigue.',
     image: images.massage,
   },
   {
-    id: 8,
+    id: '08',
     title: 'Botanical Facial',
-    category: 'Facials',
-    tag: 'Skin ritual',
-    temp: '45 min',
-    description: 'A calming facial built around cleansing, massage and hydration.',
+    sub: 'Skin ritual / calming care',
+    desc: 'Cleansing, massage and hydration in a slower, quieter treatment room.',
     image: images.facial,
   },
 ];
 
-const treatments = [
+const routes = [
   {
-    title: 'Thermal Day Pass',
-    label: 'Access',
-    price: '$95',
-    image: images.pool,
-    description: 'Indoor pool, sauna, steam room, jacuzzi access and a quiet recovery lounge.',
+    code: 'R1',
+    title: 'HEAT + WATER',
+    text: 'Pool → Finnish sauna → steam room → hydro jacuzzi → lounge cooldown.',
   },
   {
-    title: 'Sauna Circuit',
-    label: 'Heat',
-    price: '$120',
-    image: images.stoneSauna,
-    description: 'Three heat stages with cold contrast, hydration and guided pacing.',
+    code: 'R2',
+    title: 'DEEP RECOVERY',
+    text: 'Stone heater sauna → cold plunge → massage → herbal tea → low-noise lounge.',
   },
   {
-    title: 'Private Suite Escape',
-    label: 'Suite',
-    price: '$210',
-    image: images.suite,
-    description: 'A private room with jacuzzi, seating lounge, towels and recovery tea service.',
+    code: 'R3',
+    title: 'PRIVATE ESCAPE',
+    text: 'Private suite → jacuzzi → body treatment → facial → extended recovery seating.',
   },
 ];
 
-const packages = [
+const journal = [
   {
-    index: '01',
-    title: 'FULL CIRCUIT',
-    price: '$120',
-    description: 'Pool, sauna, steam room, jacuzzi and lounge recovery in one flow.',
+    number: '001',
+    title: 'NOT A BASIC SPA TEMPLATE',
+    text: 'This redesign ditches the soft, rounded, generic spa look and turns the site into something more cinematic, architectural and editorial.',
   },
   {
-    index: '02',
-    title: 'STEAM + MASSAGE',
-    price: '$165',
-    description: 'Steam chamber, bodywork session and slower recovery with tea service.',
+    number: '002',
+    title: 'LESS “WEBFLOW TEMPLATE”, MORE BRAND',
+    text: 'The layout now works with bigger type, sharper blocks, framed media, offset sections and a stronger sense of identity.',
   },
   {
-    index: '03',
-    title: 'PRIVATE FOR TWO',
-    price: '$260',
-    description: 'Private suite, jacuzzi session and a quieter couples spa experience.',
+    number: '003',
+    title: 'SCROLL SHOULD FEEL PART OF THE EXPERIENCE',
+    text: 'This version keeps the momentum scroll setup with Lenis from CDN, so the site glides instead of stopping abruptly.',
   },
 ];
 
-const facilities = [
-  {
-    id: 'A',
-    title: 'HEAT ROOMS',
-    text: 'Timber interiors, sharp detailing and controlled thermal zones.',
-    image: images.saunaInterior,
-  },
-  {
-    id: 'B',
-    title: 'WATER SPACES',
-    text: 'Warm pools, plunge contrast and hydro recovery built into the circuit.',
-    image: images.jacuzzi,
-  },
-  {
-    id: 'C',
-    title: 'QUIET LOUNGES',
-    text: 'Low-noise recovery spaces for cooling down, tea service and soft decompression.',
-    image: images.lounge,
-  },
+const nav = [
+  { label: 'Concept', id: 'concept' },
+  { label: 'Experiences', id: 'experiences' },
+  { label: 'Routes', id: 'routes' },
+  { label: 'Private', id: 'private' },
+  { label: 'Book', id: 'book' },
 ];
 
-function App() {
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [search, setSearch] = useState('');
-  const [theme, setTheme] = useState('light');
-  const [activeMenu, setActiveMenu] = useState(null);
+export default function App() {
+  const [theme, setTheme] = useState('dark');
+  const [query, setQuery] = useState('');
+  const lenisRef = useRef(null);
 
   useEffect(() => {
-    const isTouchDevice =
-      window.matchMedia('(pointer: coarse)').matches ||
-      'ontouchstart' in window ||
-      navigator.maxTouchPoints > 0;
-
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return undefined;
 
-    if (isTouchDevice || prefersReducedMotion) {
-      return;
-    }
+    let lenis = null;
+    let rafId = null;
+    let destroyed = false;
 
-    const scrollContainer = document.querySelector('.smooth-scroll-content');
-    if (!scrollContainer) return;
+    const init = async () => {
+      try {
+        const mod = await import('https://cdn.jsdelivr.net/npm/lenis@1.3.1/dist/lenis.mjs');
+        if (destroyed) return;
+        const Lenis = mod.default;
 
-    let currentScroll = window.scrollY;
-    let targetScroll = window.scrollY;
-    let animationFrame = null;
-    let isRunning = false;
+        lenis = new Lenis({
+          duration: 1.35,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+          wheelMultiplier: 0.9,
+          touchMultiplier: 1.25,
+          infinite: false,
+        });
 
-    const setBodyHeight = () => {
-      document.body.style.height = `${scrollContainer.getBoundingClientRect().height}px`;
-    };
+        lenisRef.current = lenis;
 
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+        const raf = (time) => {
+          lenis.raf(time);
+          rafId = requestAnimationFrame(raf);
+        };
 
-    const render = () => {
-      currentScroll += (targetScroll - currentScroll) * 0.085;
-
-      if (Math.abs(targetScroll - currentScroll) < 0.08) {
-        currentScroll = targetScroll;
-      }
-
-      scrollContainer.style.transform = `translate3d(0, ${-currentScroll}px, 0)`;
-
-      if (Math.abs(targetScroll - currentScroll) > 0.08) {
-        animationFrame = requestAnimationFrame(render);
-      } else {
-        isRunning = false;
-      }
-    };
-
-    const startRender = () => {
-      if (!isRunning) {
-        isRunning = true;
-        animationFrame = requestAnimationFrame(render);
+        rafId = requestAnimationFrame(raf);
+      } catch (error) {
+        console.warn('Lenis failed to load from CDN.', error);
       }
     };
 
-    const handleWheel = (event) => {
-      event.preventDefault();
-
-      const maxScroll = document.body.scrollHeight - window.innerHeight;
-      targetScroll = clamp(targetScroll + event.deltaY * 1.05, 0, maxScroll);
-
-      window.scrollTo(0, targetScroll);
-      startRender();
-    };
-
-    const handleScroll = () => {
-      targetScroll = window.scrollY;
-      startRender();
-    };
-
-    const handleResize = () => {
-      setBodyHeight();
-      targetScroll = clamp(targetScroll, 0, document.body.scrollHeight - window.innerHeight);
-      currentScroll = clamp(currentScroll, 0, document.body.scrollHeight - window.innerHeight);
-      startRender();
-    };
-
-    const handleKeydown = (event) => {
-      const maxScroll = document.body.scrollHeight - window.innerHeight;
-
-      if (event.key === 'ArrowDown') {
-        targetScroll = clamp(targetScroll + 90, 0, maxScroll);
-        window.scrollTo(0, targetScroll);
-        startRender();
-      }
-
-      if (event.key === 'ArrowUp') {
-        targetScroll = clamp(targetScroll - 90, 0, maxScroll);
-        window.scrollTo(0, targetScroll);
-        startRender();
-      }
-
-      if (event.key === 'PageDown') {
-        targetScroll = clamp(targetScroll + window.innerHeight * 0.85, 0, maxScroll);
-        window.scrollTo(0, targetScroll);
-        startRender();
-      }
-
-      if (event.key === 'PageUp') {
-        targetScroll = clamp(targetScroll - window.innerHeight * 0.85, 0, maxScroll);
-        window.scrollTo(0, targetScroll);
-        startRender();
-      }
-
-      if (event.key === 'Home') {
-        targetScroll = 0;
-        window.scrollTo(0, targetScroll);
-        startRender();
-      }
-
-      if (event.key === 'End') {
-        targetScroll = maxScroll;
-        window.scrollTo(0, targetScroll);
-        startRender();
-      }
-    };
-
-    window.__auraSmoothScrollTo = (top) => {
-      const maxScroll = document.body.scrollHeight - window.innerHeight;
-      targetScroll = clamp(top, 0, maxScroll);
-      window.scrollTo(0, targetScroll);
-      startRender();
-    };
-
-    setBodyHeight();
-    scrollContainer.classList.add('smooth-ready');
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('keydown', handleKeydown);
+    init();
 
     return () => {
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-      document.body.style.height = '';
-      scrollContainer.style.transform = '';
-      scrollContainer.classList.remove('smooth-ready');
-      delete window.__auraSmoothScrollTo;
-      window.removeEventListener('wheel', handleWheel);
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('keydown', handleKeydown);
+      destroyed = true;
+      if (rafId) cancelAnimationFrame(rafId);
+      if (lenis) lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
 
-
   useEffect(() => {
-    const revealTargets = document.querySelectorAll('.reveal');
+    const targets = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
+          if (entry.isIntersecting) entry.target.classList.add('visible');
         });
       },
-      { threshold: 0.14 }
+      { threshold: 0.15 }
     );
 
-    revealTargets.forEach((element) => observer.observe(element));
+    targets.forEach((item) => observer.observe(item));
 
+    return () => {
+      targets.forEach((item) => observer.unobserve(item));
+    };
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       const doc = document.documentElement;
-      const height = doc.scrollHeight - window.innerHeight;
-      const progress = height > 0 ? (window.scrollY / height) * 100 : 0;
-      const progressBar = document.querySelector('.progress-bar');
-      if (progressBar) progressBar.style.width = `${progress}%`;
+      const max = doc.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? (window.scrollY / max) * 100 : 0;
+      const bar = document.querySelector('.progress-line span');
+      if (bar) bar.style.width = `${progress}%`;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-
-    return () => {
-      revealTargets.forEach((element) => observer.unobserve(element));
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const filteredItems = useMemo(() => {
-    return saunaItems.filter((item) => {
-      const categoryMatch =
-        selectedCategory === 'All' ||
-        item.category === selectedCategory ||
-        (selectedCategory === 'Thermal' && ['Sauna', 'Steam', 'Pool', 'Jacuzzi'].includes(item.category));
-
-      const searchMatch = `${item.title} ${item.description} ${item.tag} ${item.category}`
-        .toLowerCase()
-        .includes(search.toLowerCase());
-
-      return categoryMatch && searchMatch;
+  const filteredExperiences = useMemo(() => {
+    return experiences.filter((item) => {
+      const haystack = `${item.title} ${item.sub} ${item.desc}`.toLowerCase();
+      return haystack.includes(query.toLowerCase());
     });
-  }, [selectedCategory, search]);
+  }, [query]);
 
-  const scrollToSection = (id) => {
-    const target = document.getElementById(id);
-    if (!target) return;
+  const goTo = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const header = document.querySelector('.top-nav');
+    const offset = header ? header.offsetHeight + 16 : 16;
+    const y = el.getBoundingClientRect().top + window.pageYOffset - offset;
 
-    const header = document.querySelector('.site-header');
-    const headerOffset = header ? header.offsetHeight + 24 : 24;
-    const y = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-
-    if (window.__auraSmoothScrollTo) {
-      window.__auraSmoothScrollTo(y);
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(y, {
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
     } else {
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
-
-    setActiveMenu(null);
   };
 
-  const handleNavLink = (event, id) => {
+  const jump = (event, id) => {
     event.preventDefault();
-    scrollToSection(id);
+    goTo(id);
   };
 
   return (
-    <div className={`app-shell theme-${theme}`}>
-      <div className="progress-track">
-        <div className="progress-bar" />
-      </div>
+    <div className={`aura-shell ${theme}`}>
+      <div className="progress-line"><span /></div>
 
-      <div className="top-strip">
-        <div className="marquee">
-          {announcements.concat(announcements).map((item, index) => (
-            <span key={`${item}-${index}`}>{item}</span>
-          ))}
-        </div>
-      </div>
-
-      <header className="site-header">
-        <a className="brand" href="#home" onClick={(event) => handleNavLink(event, 'home')}>
-          <span className="brand-mark">A</span>
-          <span>
+      <header className="top-nav reveal visible">
+        <a href="#home" className="brand-lockup" onClick={(e) => jump(e, 'home')}>
+          <div className="brand-box">A</div>
+          <div>
             <strong>AURA</strong>
-            <small>WELLNESS SPA</small>
-          </span>
+            <small>THERMAL HOUSE</small>
+          </div>
         </a>
 
-        <nav className="nav-frame" onMouseLeave={() => setActiveMenu(null)}>
-          <button
-            type="button"
-            className={activeMenu === 'treatments' ? 'nav-active' : ''}
-            onMouseEnter={() => setActiveMenu('treatments')}
-            onClick={() => setActiveMenu(activeMenu === 'treatments' ? null : 'treatments')}
-          >
-            Treatments
-          </button>
-          <button
-            type="button"
-            className={activeMenu === 'booking' ? 'nav-active' : ''}
-            onMouseEnter={() => setActiveMenu('booking')}
-            onClick={() => setActiveMenu(activeMenu === 'booking' ? null : 'booking')}
-          >
-            Booking
-          </button>
-          <a href="#about" onClick={(event) => handleNavLink(event, 'about')}>About</a>
-          <a href="#library" onClick={(event) => handleNavLink(event, 'library')}>Library</a>
-          <a href="#footer" onClick={(event) => handleNavLink(event, 'footer')}>Contact</a>
-
-          <div className={`mega-panel ${activeMenu === 'treatments' ? 'show' : ''}`}>
-            <div>
-              <h4>THERMAL</h4>
-              <a href="#library" onClick={(event) => handleNavLink(event, 'library')}>Sauna library</a>
-              <a href="#facilities" onClick={(event) => handleNavLink(event, 'facilities')}>Heat and water spaces</a>
-              <a href="#packages" onClick={(event) => handleNavLink(event, 'packages')}>Packages</a>
-            </div>
-            <div>
-              <h4>BODYWORK</h4>
-              <a href="#treatments" onClick={(event) => handleNavLink(event, 'treatments')}>Massage rituals</a>
-              <a href="#treatments" onClick={(event) => handleNavLink(event, 'treatments')}>Facials</a>
-              <a href="#about" onClick={(event) => handleNavLink(event, 'about')}>Philosophy</a>
-            </div>
-            <aside>
-              <span>Signature route</span>
-              <p>Pool → sauna → steam → jacuzzi → quiet lounge.</p>
-              <button type="button" onClick={() => scrollToSection('booking')}>Plan a visit</button>
-            </aside>
-          </div>
-
-          <div className={`small-panel ${activeMenu === 'booking' ? 'show' : ''}`}>
-            <a href="#booking" onClick={(event) => handleNavLink(event, 'booking')}>Book spa day</a>
-            <a href="#booking" onClick={(event) => handleNavLink(event, 'booking')}>Reserve private suite</a>
-          </div>
+        <nav>
+          {nav.map((item) => (
+            <a key={item.id} href={`#${item.id}`} onClick={(e) => jump(e, item.id)}>
+              {item.label}
+            </a>
+          ))}
         </nav>
 
-        <div className="header-actions">
-          <button type="button" className="theme-toggle" onClick={() => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))}>
-            {theme === 'light' ? 'DARK' : 'LIGHT'}
+        <div className="nav-actions">
+          <button type="button" className="nav-chip" onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}>
+            {theme === 'dark' ? 'LIGHT MODE' : 'DARK MODE'}
           </button>
-          <button type="button" className="utility-button" onClick={() => scrollToSection('packages')}>PLAN</button>
-          <button type="button" className="cta-button" onClick={() => scrollToSection('booking')}>BOOK NOW</button>
+          <button type="button" className="nav-cta" onClick={() => goTo('book')}>
+            BOOK NOW
+          </button>
         </div>
       </header>
 
-      <div className="smooth-scroll-content">
-      <main>
-        <section className="hero-grid" id="home">
-          <div className="hero-copy reveal">
-            <p className="section-kicker">THERMAL HOUSE / SOFIA</p>
-            <h1>Sharper spaces, cleaner heat and a less-template spa feel.</h1>
-            <p className="hero-text">
-              AURA is redesigned as a more editorial wellness brand: stronger layout, harder edges, smoother scrolling
-              and a premium circuit of sauna, steam, pool, jacuzzi and body rituals.
-            </p>
-            <div className="hero-actions">
-              <button type="button" className="cta-button" onClick={() => scrollToSection('booking')}>
-                BOOK A SPA DAY
-              </button>
-              <button type="button" className="ghost-button" onClick={() => scrollToSection('treatments')}>
-                EXPLORE TREATMENTS
-              </button>
-            </div>
-          </div>
-
-          <div className="hero-visual reveal">
-            <img src={images.hero} alt="Premium spa exterior with water" />
-            <div className="hero-badge hero-badge-top">
-              <span>01</span>
-              <strong>Sauna</strong>
-            </div>
-            <div className="hero-badge hero-badge-mid">
-              <span>02</span>
-              <strong>Steam</strong>
-            </div>
-            <div className="hero-badge hero-badge-bottom">
-              <span>03</span>
-              <strong>Jacuzzi</strong>
-            </div>
-          </div>
-        </section>
-
-        <section className="metric-band reveal">
-          <article>
-            <strong>15</strong>
-            <span>heat experiences</span>
-          </article>
-          <article>
-            <strong>04</strong>
-            <span>facility zones</span>
-          </article>
-          <article>
-            <strong>4.9</strong>
-            <span>guest rating</span>
-          </article>
-          <article>
-            <strong>DAILY</strong>
-            <span>appointment only</span>
-          </article>
-        </section>
-
-        <section className="section editorial-intro reveal" id="treatments">
-          <div className="intro-copy">
-            <p className="section-kicker">TREATMENTS</p>
-            <h2>Heat, water and recovery rituals.</h2>
+      <main id="home">
+        <section className="hero-stage reveal">
+          <div className="hero-left">
+            <div className="eyebrow">EDITORIAL REDESIGN / AURA SPA</div>
+            <h1>
+              Fully rebuilt.
+              <br />
+              Sharper.
+              <br />
+              More cinematic.
+            </h1>
             <p>
-              Filter the spa library by sauna, steam, water and recovery treatments. The layout is sharper and more
-              editorial, with less rounded UI and stronger image-led sections.
+              This version is a complete redesign, not just a tweak. It drops the standard template vibe and pushes
+              the site toward a more architectural, editorial and luxury-feeling experience.
             </p>
+            <div className="hero-buttons">
+              <button type="button" className="primary-square" onClick={() => goTo('experiences')}>
+                VIEW EXPERIENCES
+              </button>
+              <button type="button" className="secondary-square" onClick={() => goTo('concept')}>
+                SEE CONCEPT
+              </button>
+            </div>
           </div>
-          <div className="intro-aside">
-            <span>New direction</span>
-            <p>Harder corners · more asymmetry · smoother scroll · less template energy.</p>
+
+          <div className="hero-right">
+            <img src={images.hero} alt="Aura spa pool exterior" />
+            <div className="hero-card card-a">
+              <span>01</span>
+              <strong>SAUNA</strong>
+            </div>
+            <div className="hero-card card-b">
+              <span>02</span>
+              <strong>POOL</strong>
+            </div>
+            <div className="hero-card card-c">
+              <span>03</span>
+              <strong>RITUALS</strong>
+            </div>
           </div>
         </section>
 
-        <section className="filter-bar reveal" id="library">
-          <div className="chip-row">
-            {categories.map((category) => (
-              <button
-                type="button"
-                key={category}
-                className={selectedCategory === category ? 'chip active' : 'chip'}
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </button>
-            ))}
+        <section className="status-strip reveal">
+          <div>
+            <strong>15+</strong>
+            <span>SPA EXPERIENCES</span>
           </div>
+          <div>
+            <strong>04</strong>
+            <span>CORE ZONES</span>
+          </div>
+          <div>
+            <strong>4.9</strong>
+            <span>RATED ESCAPE</span>
+          </div>
+          <div>
+            <strong>DAILY</strong>
+            <span>BY APPOINTMENT</span>
+          </div>
+        </section>
 
-          <div className="search-box">
+        <section className="concept-grid reveal" id="concept">
+          <div className="section-marker">CONCEPT</div>
+          <div className="concept-copy">
+            <h2>Luxury wellness, but with more identity.</h2>
+            <p>
+              Instead of soft pills, bubbly cards and generic spa blocks, the whole site is treated more like a brand
+              magazine: strong typography, harder lines, split screens, framed image systems and layouts that feel built,
+              not auto-generated.
+            </p>
+          </div>
+          <div className="concept-image large-image">
+            <img src={images.lounge} alt="Aura lounge" />
+          </div>
+          <div className="concept-note">
+            <span>Design direction</span>
+            <p>
+              Editorial / architectural / premium. Less “template”, more atmosphere. Less safe, more memorable.
+            </p>
+          </div>
+        </section>
+
+        <section className="journal-section" id="journal">
+          {journal.map((item) => (
+            <article key={item.number} className="journal-card reveal">
+              <span>{item.number}</span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </section>
+
+        <section className="experience-header reveal" id="experiences">
+          <div>
+            <div className="section-marker">EXPERIENCES</div>
+            <h2>The thermal library.</h2>
+          </div>
+          <div className="search-frame">
             <input
               type="text"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search rituals..."
+              placeholder="Search sauna, steam, pool..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
             />
           </div>
         </section>
 
-        <section className="library-grid">
-          {filteredItems.map((item, index) => (
-            <article key={item.id} className={`library-card reveal ${index === 0 ? 'feature' : ''}`}>
+        <section className="experience-grid">
+          {filteredExperiences.map((item, index) => (
+            <article className={`experience-card reveal ${index === 0 ? 'feature' : ''}`} key={item.id}>
               <img src={item.image} alt={item.title} />
-              <div className="card-overlay" />
-              <div className="card-copy">
-                <span className="card-tag">{item.tag}</span>
-                <div className="card-index">{String(index + 1).padStart(2, '0')}</div>
+              <div className="experience-overlay" />
+              <div className="experience-copy">
+                <span>{item.id}</span>
                 <h3>{item.title}</h3>
-                <strong>{item.temp}</strong>
-                <p>{item.description}</p>
+                <strong>{item.sub}</strong>
+                <p>{item.desc}</p>
               </div>
             </article>
           ))}
         </section>
 
-        <section className="treatment-grid section">
-          {treatments.map((item) => (
-            <article key={item.title} className="treatment-card reveal">
-              <div className="treatment-media">
-                <img src={item.image} alt={item.title} />
-                <span>{item.label}</span>
-              </div>
-              <div className="treatment-copy">
-                <div className="treatment-head">
-                  <h3>{item.title}</h3>
-                  <strong>{item.price}</strong>
-                </div>
-                <p>{item.description}</p>
-              </div>
-            </article>
-          ))}
-        </section>
-
-        <section className="about-block reveal" id="about">
-          <div className="about-media">
-            <img src={images.massage} alt="Massage therapy room" />
-          </div>
-          <div className="about-copy">
-            <p className="section-kicker">AURA APPROACH</p>
-            <h2>A spa that feels designed, not dropped from a template.</h2>
+        <section className="route-layout reveal" id="routes">
+          <div className="route-intro">
+            <div className="section-marker">ROUTES</div>
+            <h2>Build the visit like a sequence.</h2>
             <p>
-              The new concept leans more luxury-editorial than generic spa template. Layouts are cleaner, corners are
-              sharper, imagery is bolder and every section feels more intentional.
+              Instead of listing random services, the experience is framed as a route through heat, water and recovery.
             </p>
-            <ul>
-              <li>Dry sauna, steam room and hydrotherapy flow</li>
-              <li>Pool recovery, quiet lounges and private suite booking</li>
-              <li>Massage and facial rituals layered into the circuit</li>
-            </ul>
-            <button type="button" className="cta-button" onClick={() => scrollToSection('footer')}>
-              LEARN THE PHILOSOPHY
+          </div>
+          <div className="route-list">
+            {routes.map((route) => (
+              <article key={route.code}>
+                <span>{route.code}</span>
+                <h3>{route.title}</h3>
+                <p>{route.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="private-stage reveal" id="private">
+          <div className="private-media">
+            <img src={images.suite} alt="Private suite" />
+          </div>
+          <div className="private-copy">
+            <div className="section-marker">PRIVATE SUITE</div>
+            <h2>A quieter side of the spa.</h2>
+            <p>
+              Private suite booking gets its own section and mood instead of feeling like a tiny afterthought. Use this
+              area to sell couples bookings, quiet escapes and higher-value experiences.
+            </p>
+            <div className="private-meta">
+              <div>
+                <strong>$210</strong>
+                <span>PRIVATE ESCAPE</span>
+              </div>
+              <div>
+                <strong>90 MIN</strong>
+                <span>EXTENDED TIME</span>
+              </div>
+              <div>
+                <strong>2 PPL</strong>
+                <span>COUPLES OPTION</span>
+              </div>
+            </div>
+            <button type="button" className="primary-square" onClick={() => goTo('book')}>
+              RESERVE SUITE
             </button>
           </div>
         </section>
 
-        <section className="section" id="packages">
-          <div className="editorial-intro reveal compact-gap">
-            <div className="intro-copy compact-width">
-              <p className="section-kicker">PACKAGES</p>
-              <h2>Build your spa day.</h2>
-            </div>
-          </div>
-
-          <div className="package-grid">
-            {packages.map((item) => (
-              <article key={item.index} className="package-card reveal">
-                <span className="package-index">{item.index}</span>
-                <strong>{item.price}</strong>
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-              </article>
-            ))}
-          </div>
+        <section className="editorial-banner reveal">
+          <div className="scroll-line" />
+          <p>
+            SAUNA · STEAM · THERMAL POOL · PLUNGE · HYDRO JACUZZI · MASSAGE · FACIALS · PRIVATE SUITE · QUIET LOUNGE
+          </p>
         </section>
 
-        <section className="section" id="facilities">
-          <div className="editorial-intro reveal compact-gap">
-            <div className="intro-copy compact-width">
-              <p className="section-kicker">FACILITIES</p>
-              <h2>Pools, heat rooms and quiet recovery spaces.</h2>
-            </div>
-          </div>
-
-          <div className="facility-grid">
-            {facilities.map((item) => (
-              <article key={item.id} className="facility-card reveal">
-                <img src={item.image} alt={item.title} />
-                <div className="card-overlay" />
-                <div className="facility-copy">
-                  <span>{item.id}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="booking-block reveal" id="booking">
-          <div>
-            <p className="section-kicker">BOOKING</p>
-            <h2>Ready to book your escape?</h2>
+        <section className="book-section reveal" id="book">
+          <div className="book-left">
+            <div className="section-marker">BOOKING</div>
+            <h2>Ready to turn this into the final direction?</h2>
             <p>
-              Reserve a full spa day, build a custom thermal route or book a private suite experience.
+              This package is a complete redesign pass: new structure, new sections, new visual language and a much less
+              template-looking feel.
             </p>
           </div>
-          <div className="booking-actions">
-            <a className="cta-button link-button" href="mailto:hello@aurawellnessspa.com">BOOK BY EMAIL</a>
-            <a className="utility-button link-button" href="tel:+359880000000">CALL NOW</a>
+
+          <div className="book-right">
+            <a href="mailto:hello@aurawellnessspa.com" className="primary-square link-square">
+              BOOK BY EMAIL
+            </a>
+            <a href="tel:+359880000000" className="secondary-square link-square">
+              CALL NOW
+            </a>
           </div>
         </section>
       </main>
 
-      <footer className="site-footer" id="footer">
+      <footer className="footer-grid reveal visible">
         <div className="footer-brand">
-          <a className="brand" href="#home" onClick={(event) => handleNavLink(event, 'home')}>
-            <span className="brand-mark">A</span>
-            <span>
-              <strong>AURA</strong>
-              <small>WELLNESS SPA</small>
-            </span>
-          </a>
-          <p>
-            Sauna, steam, pool, jacuzzi, massage therapy and quiet recovery, reworked with a sharper editorial layout.
-          </p>
+          <div className="brand-box">A</div>
+          <div>
+            <strong>AURA</strong>
+            <small>THERMAL HOUSE</small>
+          </div>
         </div>
 
         <div>
           <h4>EXPLORE</h4>
-          <a href="#treatments" onClick={(event) => handleNavLink(event, 'treatments')}>Treatments</a>
-          <a href="#packages" onClick={(event) => handleNavLink(event, 'packages')}>Packages</a>
-          <a href="#booking" onClick={(event) => handleNavLink(event, 'booking')}>Booking</a>
-        </div>
-
-        <div>
-          <h4>VISIT</h4>
-          <p>42 Willow Lane</p>
-          <p>Sofia Wellness District</p>
-          <p>Daily / 9 AM — 9 PM</p>
+          <a href="#concept" onClick={(e) => jump(e, 'concept')}>Concept</a>
+          <a href="#experiences" onClick={(e) => jump(e, 'experiences')}>Experiences</a>
+          <a href="#routes" onClick={(e) => jump(e, 'routes')}>Routes</a>
         </div>
 
         <div>
           <h4>CONTACT</h4>
-          <a href="tel:+359880000000">+359 88 000 0000</a>
-          <a href="mailto:hello@aurawellnessspa.com">hello@aurawellnessspa.com</a>
+          <p>42 Willow Lane</p>
+          <p>Sofia Wellness District</p>
+          <p>hello@aurawellnessspa.com</p>
         </div>
       </footer>
-      </div>
     </div>
   );
 }
-
-export default App;
