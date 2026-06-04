@@ -13,7 +13,6 @@ button, input { font: inherit; }
   --text: #08241c;
   --soft: #667b68;
   --green: #17372d;
-  --green-2: #294e41;
   --gold: #d0b386;
   --line: rgba(8,36,28,.1);
   --shadow: 0 24px 80px rgba(20, 38, 31, .1);
@@ -28,7 +27,6 @@ button, input { font: inherit; }
   --text: #f3efe7;
   --soft: #b8c6ba;
   --green: #d0b386;
-  --green-2: #e5c99b;
   --gold: #315b49;
   --line: rgba(255,255,255,.1);
   background: radial-gradient(circle at 90% 20%, rgba(208,179,134,.12), transparent 30%), #0b1714;
@@ -168,7 +166,7 @@ button, input { font: inherit; }
   padding: 1.2rem;
 }
 
-.mega-menu h4, .small-menu h4 { margin: 0 0 1rem; }
+.mega-menu h4 { margin: 0 0 1rem; }
 .mega-menu a, .small-menu a {
   display: block;
   color: var(--soft);
@@ -321,6 +319,7 @@ main { padding: 0 4vw 4rem; }
   border-radius: 999px;
   padding: .7rem 1rem;
   font-weight: 900;
+  cursor: pointer;
 }
 .chips button.active { background: var(--green); color: #fff8ec; }
 .dark .chips button.active { color: #0b1714; }
@@ -360,7 +359,7 @@ main { padding: 0 4vw 4rem; }
 .shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(7,20,15,.05), rgba(7,20,15,.2) 35%, rgba(7,20,15,.88));
+  background: linear-gradient(180deg, rgba(7,20,15,.02), rgba(7,20,15,.1) 38%, rgba(7,20,15,.76));
 }
 
 .card-content, .facility > div:last-child {
@@ -372,7 +371,7 @@ main { padding: 0 4vw 4rem; }
 
 .tag {
   display: inline-flex;
-  background: rgba(255,255,255,.9);
+  background: rgba(255,255,255,.92);
   color: #17372d;
   border-radius: 999px;
   padding: .55rem .8rem;
@@ -404,8 +403,8 @@ main { padding: 0 4vw 4rem; }
 }
 
 .sauna-card.big h3 { font-size: clamp(2.5rem, 4vw, 4.6rem); }
-.card-content strong { display: block; color: rgba(255,248,236,.8); margin-bottom: .5rem; }
-.card-content p, .facility p { margin: 0; color: rgba(255,248,236,.78); line-height: 1.55; }
+.card-content strong { display: block; color: rgba(255,248,236,.9); margin-bottom: .5rem; }
+.card-content p, .facility p { margin: 0; color: rgba(255,248,236,.84); line-height: 1.55; }
 
 .treatments, .packages, .facilities {
   display: grid;

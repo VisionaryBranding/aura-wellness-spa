@@ -1,18 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import './App.css';
 
-import saunaFinnish from './assets/sauna-finnish.svg';
-import woodSauna from './assets/wood-sauna.svg';
-import steamRoom from './assets/steam-room.svg';
-import infraredSauna from './assets/infrared.svg';
-import saltSauna from './assets/salt-sauna.svg';
-import poolImage from './assets/pool.svg';
-import jacuzziImage from './assets/jacuzzi.svg';
-import panoramicSauna from './assets/panoramic.svg';
-import massageImage from './assets/massage.svg';
-import facialImage from './assets/facial.svg';
-import privateSuite from './assets/private-suite.svg';
-import herbalSauna from './assets/herbal.svg';
+const img = {
+  hero: 'https://unsplash.com/photos/p8VTUqQLLjM/download?force=true&w=1800',
+  saunaHeater: 'https://unsplash.com/photos/hyL_9mPquhc/download?force=true&w=1600',
+  hotTubRoom: 'https://unsplash.com/photos/xa2Q7-KkRjY/download?force=true&w=1600',
+  poolIndoor: 'https://unsplash.com/photos/i1wR9DiCABc/download?force=true&w=1600',
+  poolLarge: 'https://unsplash.com/photos/Dt5oTgvVNjM/download?force=true&w=1600',
+  steamRoom: 'https://unsplash.com/photos/9qYFu1NzpS8/download?force=true&w=1600',
+  saunaPeople: 'https://unsplash.com/photos/S3DQDLWe_Ps/download?force=true&w=1600',
+  saunaGroup: 'https://unsplash.com/photos/kNEYWuBM3C4/download?force=true&w=1600',
+  hotTubOutside: 'https://unsplash.com/photos/qcaGGizzoow/download?force=true&w=1600',
+  saunaBucket: 'https://unsplash.com/photos/NRZ1bc4h9ME/download?force=true&w=1600',
+  jacuzziTub: 'https://unsplash.com/photos/qWcK3pZpwmE/download?force=true&w=1600',
+  saunaNew: 'https://unsplash.com/photos/hgOUf_hY4ok/download?force=true&w=1600',
+};
 
 const announcements = [
   'OPEN DAILY BY APPOINTMENT',
@@ -21,30 +23,150 @@ const announcements = [
 ];
 
 const saunaItems = [
-  { id: 1, title: 'Traditional Finnish Sauna', category: 'Sauna', tag: 'Classic heat', temperature: '80–100°C · dry heat', description: 'Classic cedar heat for deep thermal contrast and full-body reset.', image: saunaFinnish },
-  { id: 2, title: 'Wood-Burning Sauna', category: 'Sauna', tag: 'Heritage heat', temperature: '75–95°C · fire-heated', description: 'A slower, more atmospheric heat ritual with a natural timber aroma.', image: woodSauna },
-  { id: 3, title: 'Steam Room', category: 'Steam', tag: 'Eucalyptus mist', temperature: '40–50°C · high humidity', description: 'Warm fog, softened breathing and a gentler approach to heat recovery.', image: steamRoom },
-  { id: 4, title: 'Infrared Sauna', category: 'Sauna', tag: 'Radiant warmth', temperature: '45–60°C · infrared', description: 'Targeted warming that feels lighter while still supporting recovery.', image: infraredSauna },
-  { id: 5, title: 'Salt Sauna', category: 'Thermal', tag: 'Mineral air', temperature: '45–70°C · mineral atmosphere', description: 'Salt-rich air adds a clean, restorative feeling to the sauna experience.', image: saltSauna },
-  { id: 6, title: 'Herbal Steam Chamber', category: 'Steam', tag: 'Botanical steam', temperature: '42–48°C · infused herbs', description: 'Aromatic steam therapy layered with herbal notes and softer humidity.', image: herbalSauna },
-  { id: 7, title: 'Indoor Recovery Pool', category: 'Pool', tag: 'Warm water', temperature: '34°C · hydro-relaxation', description: 'Gentle warm water designed for floating, unwinding and quiet recovery.', image: poolImage },
-  { id: 8, title: 'Hydrotherapy Jacuzzi', category: 'Jacuzzi', tag: 'Private soak', temperature: '36–38°C · bubbling massage', description: 'Effervescent water pressure helps relax sore muscles after the heat circuit.', image: jacuzziImage },
-  { id: 9, title: 'Panoramic Sauna', category: 'Sauna', tag: 'Scenic view', temperature: '70–90°C · elevated view', description: 'A wide-view room that combines slow heat with a more immersive environment.', image: panoramicSauna },
-  { id: 10, title: 'Massage Therapy', category: 'Massage', tag: 'Hands-on reset', temperature: '50 min · custom pressure', description: 'Swedish and deep-tissue techniques tailored to stress, tension and posture.', image: massageImage },
-  { id: 11, title: 'Aromatherapy Facial', category: 'Facials', tag: 'Glow ritual', temperature: '45 min · botanical care', description: 'A restoring skin ritual with cleansing, massage and a calming finish.', image: facialImage },
-  { id: 12, title: 'Private Spa Suite', category: 'Jacuzzi', tag: 'Private room', temperature: '90 min · quiet escape', description: 'A secluded spa suite with jacuzzi, soft lighting and a calm lounge mood.', image: privateSuite },
+  {
+    id: 1,
+    title: 'Modern Finnish Sauna',
+    category: 'Sauna',
+    tag: 'Classic heat',
+    temperature: '80–100°C · dry heat',
+    description: 'Cedar warmth, hot stones and a calm room made for deep thermal contrast.',
+    image: img.hero,
+  },
+  {
+    id: 2,
+    title: 'Stone Heater Sauna',
+    category: 'Sauna',
+    tag: 'Heat therapy',
+    temperature: '75–95°C · stone heat',
+    description: 'A premium wooden sauna with a stone heater and soft architectural lighting.',
+    image: img.saunaHeater,
+  },
+  {
+    id: 3,
+    title: 'Private Hot Tub Room',
+    category: 'Jacuzzi',
+    tag: 'Private soak',
+    temperature: '36–38°C · warm soak',
+    description: 'A quiet wooden spa room with a tiled hot tub, natural light and slow recovery.',
+    image: img.hotTubRoom,
+  },
+  {
+    id: 4,
+    title: 'Indoor Spa Pool',
+    category: 'Pool',
+    tag: 'Spa access',
+    temperature: '34°C · hydro recovery',
+    description: 'Warm water, calm lighting and poolside recovery after sauna or steam.',
+    image: img.poolIndoor,
+  },
+  {
+    id: 5,
+    title: 'Modern Steam Room',
+    category: 'Steam',
+    tag: 'Steam ritual',
+    temperature: '40–50°C · high humidity',
+    description: 'Ambient stone, soft steam and a slower reset for breathing and recovery.',
+    image: img.steamRoom,
+  },
+  {
+    id: 6,
+    title: 'Sauna Social Ritual',
+    category: 'Sauna',
+    tag: 'Group heat',
+    temperature: '70–90°C · shared sauna',
+    description: 'A social sauna ritual with a relaxed, steamy wellness-room atmosphere.',
+    image: img.saunaPeople,
+  },
+  {
+    id: 7,
+    title: 'Nordic Group Sauna',
+    category: 'Sauna',
+    tag: 'Nordic ritual',
+    temperature: '70–95°C · timber room',
+    description: 'A warm wooden room built around stones, steam and slow conversation.',
+    image: img.saunaGroup,
+  },
+  {
+    id: 8,
+    title: 'Outdoor Hot Tub',
+    category: 'Jacuzzi',
+    tag: 'Outdoor soak',
+    temperature: '38°C · open air',
+    description: 'A secluded wooden hot tub made for outdoor recovery and quiet weekends.',
+    image: img.hotTubOutside,
+  },
+  {
+    id: 9,
+    title: 'Bucket & Ladle Sauna',
+    category: 'Sauna',
+    tag: 'Traditional',
+    temperature: '75–90°C · water on stones',
+    description: 'Classic sauna accessories, hot stones and a darker Nordic heat mood.',
+    image: img.saunaBucket,
+  },
+  {
+    id: 10,
+    title: 'Luxury Jacuzzi Tub',
+    category: 'Jacuzzi',
+    tag: 'Spa suite',
+    temperature: 'Private room · warm water',
+    description: 'A refined hotel-style jacuzzi corner with wood, curtains and warm light.',
+    image: img.jacuzziTub,
+  },
+  {
+    id: 11,
+    title: 'Indoor Recovery Pool',
+    category: 'Pool',
+    tag: 'Pool lounge',
+    temperature: '34°C · quiet swim',
+    description: 'A clean indoor pool experience for floating, cooling down and relaxing.',
+    image: img.poolLarge,
+  },
+  {
+    id: 12,
+    title: 'New Sauna Studio',
+    category: 'Sauna',
+    tag: 'Modern room',
+    temperature: '80°C · soft glow',
+    description: 'A minimal wood sauna with clean benches, heater and modern finish.',
+    image: img.saunaNew,
+  },
 ];
 
 const treatments = [
-  { title: 'Thermal Spa Day Pass', eyebrow: 'Spa access', price: '$95', description: 'Indoor pool, steam room, dry sauna, jacuzzi and recovery lounge.', image: poolImage },
-  { title: 'Nordic Sauna Circuit', eyebrow: 'Heat therapy', price: '$90', description: 'Guided heat ritual with dry sauna, cool towel reset and mineral hydration.', image: saunaFinnish },
-  { title: 'Private Jacuzzi Escape', eyebrow: 'Private soak', price: '$145', description: 'Private warm soak with herbal tea, mood lighting and recovery time.', image: jacuzziImage },
+  {
+    title: 'Thermal Spa Day Pass',
+    eyebrow: 'Spa access',
+    price: '$95',
+    description: 'Access to indoor pool, steam room, dry sauna, jacuzzi and recovery lounge.',
+    image: img.poolIndoor,
+  },
+  {
+    title: 'Nordic Sauna Circuit',
+    eyebrow: 'Heat therapy',
+    price: '$90',
+    description: 'Guided dry sauna, stone heater session, cool towel reset and mineral hydration.',
+    image: img.hero,
+  },
+  {
+    title: 'Private Jacuzzi Escape',
+    eyebrow: 'Private soak',
+    price: '$145',
+    description: 'A private warm soak with quiet lighting, soft towels and recovery time.',
+    image: img.hotTubRoom,
+  },
 ];
 
 const packages = [
   { icon: '≈', price: '$120', title: 'Full Thermal Circuit', description: 'Pool access, dry sauna, steam room, jacuzzi and quiet lounge recovery.' },
-  { icon: '♧', price: '$150', title: 'Steam & Hammam Ritual', description: 'Steam chamber, body polish, warm rinse, botanical oil and herbal tea.' },
+  { icon: '♧', price: '$150', title: 'Steam & Sauna Ritual', description: 'Steam chamber, dry heat, warm rinse, botanical oil and herbal tea.' },
   { icon: '♡', price: '$260', title: 'Jacuzzi Escape for Two', description: 'Private jacuzzi time, synchronized bodywork and a calm recovery lounge.' },
+];
+
+const facilities = [
+  { id: '01', title: 'Indoor Pool', description: 'Warm water, soft lighting and slow poolside recovery.', image: img.poolLarge },
+  { id: '02', title: 'Dry Sauna', description: 'Cedar heat, deep breathing and thermal contrast.', image: img.hero },
+  { id: '03', title: 'Steam Room', description: 'Ambient steam, warm air and a softer reset.', image: img.steamRoom },
 ];
 
 const categories = ['All', 'Thermal', 'Sauna', 'Steam', 'Jacuzzi', 'Pool', 'Massage', 'Facials'];
@@ -58,23 +180,29 @@ export default function App() {
   useEffect(() => {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
-      entries => entries.forEach(entry => entry.isIntersecting && entry.target.classList.add('visible')),
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      },
       { threshold: 0.12 }
     );
-    reveals.forEach(el => observer.observe(el));
 
-    const onScroll = () => {
+    reveals.forEach(element => observer.observe(element));
+
+    const handleScroll = () => {
       const bar = document.querySelector('.progress-bar');
       const height = document.documentElement.scrollHeight - window.innerHeight;
-      if (bar) bar.style.width = `${height > 0 ? (window.scrollY / height) * 100 : 0}%`;
+      const progress = height > 0 ? (window.scrollY / height) * 100 : 0;
+      if (bar) bar.style.width = `${progress}%`;
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
 
     return () => {
-      reveals.forEach(el => observer.unobserve(el));
-      window.removeEventListener('scroll', onScroll);
+      reveals.forEach(element => observer.unobserve(element));
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -83,10 +211,11 @@ export default function App() {
       const categoryMatch =
         selectedCategory === 'All' ||
         item.category === selectedCategory ||
-        (selectedCategory === 'Thermal' && ['Sauna', 'Steam', 'Pool', 'Jacuzzi', 'Thermal'].includes(item.category));
+        (selectedCategory === 'Thermal' && ['Sauna', 'Steam', 'Pool', 'Jacuzzi'].includes(item.category));
 
-      const text = `${item.title} ${item.description} ${item.category} ${item.tag}`.toLowerCase();
-      return categoryMatch && text.includes(search.toLowerCase());
+      const textMatch = `${item.title} ${item.description} ${item.category} ${item.tag}`.toLowerCase().includes(search.toLowerCase());
+
+      return categoryMatch && textMatch;
     });
   }, [selectedCategory, search]);
 
@@ -96,27 +225,62 @@ export default function App() {
 
       <div className="top-strip">
         <div className="marquee">
-          {announcements.concat(announcements).map((item, i) => <span key={i}>{item}</span>)}
+          {announcements.concat(announcements).map((item, index) => (
+            <span key={`${item}-${index}`}>{item}</span>
+          ))}
         </div>
       </div>
 
       <header className="header">
-        <a href="#home" className="brand">
+        <a className="brand" href="#home">
           <span className="brand-icon">✺</span>
-          <span><strong>AURA</strong><small>WELLNESS SPA</small></span>
+          <span>
+            <strong>AURA</strong>
+            <small>WELLNESS SPA</small>
+          </span>
         </a>
 
         <nav className="nav" onMouseLeave={() => setActiveMenu(null)}>
-          <button onMouseEnter={() => setActiveMenu('treatments')} className={activeMenu === 'treatments' ? 'active' : ''}>Treatments</button>
-          <button onMouseEnter={() => setActiveMenu('booking')} className={activeMenu === 'booking' ? 'active' : ''}>Booking</button>
+          <button
+            type="button"
+            onMouseEnter={() => setActiveMenu('treatments')}
+            onClick={() => setActiveMenu(activeMenu === 'treatments' ? null : 'treatments')}
+            className={activeMenu === 'treatments' ? 'active' : ''}
+          >
+            Treatments
+          </button>
+
+          <button
+            type="button"
+            onMouseEnter={() => setActiveMenu('booking')}
+            onClick={() => setActiveMenu(activeMenu === 'booking' ? null : 'booking')}
+            className={activeMenu === 'booking' ? 'active' : ''}
+          >
+            Booking
+          </button>
+
           <a href="#about">About</a>
           <a href="#sauna-library">Gallery</a>
           <a href="#footer">Contact</a>
 
           <div className={`mega-menu ${activeMenu === 'treatments' ? 'show' : ''}`}>
-            <div><h4>Thermal circuit</h4><a href="#sauna-library">Sauna menu</a><a href="#facilities">Steam rooms</a><a href="#packages">Jacuzzi recovery</a></div>
-            <div><h4>Body rituals</h4><a href="#treatments">Massage</a><a href="#treatments">Facials</a><a href="#about">Private suite</a></div>
-            <aside><h4>Signature circuit</h4><p>Pool → sauna → steam → jacuzzi → recovery lounge.</p><a href="#booking">Plan a visit</a></aside>
+            <div>
+              <h4>Thermal circuit</h4>
+              <a href="#sauna-library">Sauna menu</a>
+              <a href="#facilities">Steam rooms</a>
+              <a href="#packages">Jacuzzi recovery</a>
+            </div>
+            <div>
+              <h4>Body rituals</h4>
+              <a href="#treatments">Massage</a>
+              <a href="#treatments">Facials</a>
+              <a href="#about">Private suite</a>
+            </div>
+            <aside>
+              <h4>Signature circuit</h4>
+              <p>Pool → sauna → steam → jacuzzi → recovery lounge.</p>
+              <a href="#booking">Plan a visit</a>
+            </aside>
           </div>
 
           <div className={`small-menu ${activeMenu === 'booking' ? 'show' : ''}`}>
@@ -126,7 +290,7 @@ export default function App() {
         </nav>
 
         <div className="actions">
-          <button className="circle" onClick={() => setThemeDark(v => !v)}>☾</button>
+          <button className="circle" type="button" onClick={() => setThemeDark(value => !value)}>☾</button>
           <a className="outline" href="#packages">Plan</a>
           <a className="book" href="#booking">Book now</a>
         </div>
@@ -137,7 +301,10 @@ export default function App() {
           <div className="hero-copy reveal">
             <p className="kicker">THERMAL RESORT CONCEPT</p>
             <h1>Quiet heat rooms, soft water and full-body recovery.</h1>
-            <p>AURA is a premium wellness spa built around sauna rituals, steam rooms, indoor pools, private jacuzzis, massage therapy and slow recovery lounges.</p>
+            <p>
+              AURA is a premium wellness spa built around sauna rituals, steam rooms, indoor pools, private jacuzzis,
+              massage therapy and slow recovery lounges.
+            </p>
             <div className="hero-buttons">
               <a className="gold-btn" href="#booking">Book a spa day →</a>
               <a className="glass-btn" href="#treatments">Explore treatments</a>
@@ -145,7 +312,7 @@ export default function App() {
           </div>
 
           <div className="hero-image reveal">
-            <img src={saunaFinnish} alt="Sauna room" />
+            <img src={img.hero} alt="Modern wooden sauna interior" />
             <span className="floating-card one"><b>01</b> Sauna</span>
             <span className="floating-card two"><b>02</b> Steam</span>
             <span className="floating-card three"><b>03</b> Jacuzzi</span>
@@ -162,25 +329,38 @@ export default function App() {
         <section className="section reveal" id="sauna-library">
           <p className="kicker">SAUNA WORLD</p>
           <h2>Heat, water and recovery rituals.</h2>
-          <p className="section-text">Filter the full menu by sauna, steam, jacuzzi, pool, massage or facial treatments.</p>
+          <p className="section-text">
+            Filter the full menu by sauna, steam, jacuzzi, pool, massage or facial treatments.
+          </p>
 
           <div className="filters">
             <div className="chips">
               {categories.map(category => (
-                <button key={category} onClick={() => setSelectedCategory(category)} className={selectedCategory === category ? 'active' : ''}>{category}</button>
+                <button
+                  type="button"
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={selectedCategory === category ? 'active' : ''}
+                >
+                  {category}
+                </button>
               ))}
             </div>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search rituals..." />
+            <input
+              value={search}
+              onChange={event => setSearch(event.target.value)}
+              placeholder="Search rituals..."
+            />
           </div>
 
           <div className="sauna-grid">
-            {filteredItems.map((item, i) => (
-              <article className={`sauna-card reveal ${i === 0 ? 'big' : ''}`} key={item.id}>
+            {filteredItems.map((item, index) => (
+              <article className={`sauna-card reveal ${index === 0 ? 'big' : ''}`} key={item.id}>
                 <img src={item.image} alt={item.title} />
                 <div className="shade" />
                 <div className="card-content">
                   <span className="tag">{item.tag}</span>
-                  <b className="num">{String(i + 1).padStart(2, '0')}</b>
+                  <b className="num">{String(index + 1).padStart(2, '0')}</b>
                   <h3>{item.title}</h3>
                   <strong>{item.temperature}</strong>
                   <p>{item.description}</p>
@@ -193,7 +373,9 @@ export default function App() {
         <section className="section reveal" id="treatments">
           <p className="kicker">TREATMENTS</p>
           <h2>Saunas, pools, jacuzzis and massage.</h2>
-          <p className="section-text">A complete spa experience focused on water, heat, steam and hands-on recovery.</p>
+          <p className="section-text">
+            A complete spa experience focused on water, heat, steam and hands-on recovery.
+          </p>
 
           <div className="treatments">
             {treatments.map(item => (
@@ -213,11 +395,14 @@ export default function App() {
         </section>
 
         <section className="about reveal" id="about">
-          <img src={massageImage} alt="Massage therapy" />
+          <img src={img.jacuzziTub} alt="Luxury jacuzzi spa suite" />
           <div>
             <p className="kicker">THE AURA APPROACH</p>
             <h2>A complete spa escape, not just a treatment.</h2>
-            <p>The experience is built as a full wellness circuit: warm pool, dry sauna, steam room, jacuzzi, treatment rooms and a quiet recovery lounge after every ritual.</p>
+            <p>
+              The experience is built as a full wellness circuit: warm pool, dry sauna, steam room, jacuzzi,
+              treatment rooms and a quiet recovery lounge after every ritual.
+            </p>
             <ul>
               <li>✓ Dry sauna and eucalyptus steam</li>
               <li>✓ Indoor pool and hydrotherapy jacuzzi</li>
@@ -230,6 +415,7 @@ export default function App() {
         <section className="section reveal" id="packages">
           <p className="kicker">PACKAGES</p>
           <h2>Build your spa day.</h2>
+
           <div className="packages">
             {packages.map(item => (
               <article className="package reveal" key={item.title}>
@@ -245,17 +431,19 @@ export default function App() {
         <section className="section reveal" id="facilities">
           <p className="kicker">SPA FACILITIES</p>
           <h2>Pools, heat rooms and quiet recovery spaces.</h2>
-          <p className="section-text">AURA now feels like a full spa resort, not just a simple treatment page.</p>
+          <p className="section-text">
+            AURA now feels like a full spa resort, not just a simple treatment page.
+          </p>
 
           <div className="facilities">
-            {[poolImage, saunaFinnish, steamRoom].map((img, i) => (
-              <article className="facility reveal" key={i}>
-                <img src={img} alt="" />
+            {facilities.map(item => (
+              <article className="facility reveal" key={item.id}>
+                <img src={item.image} alt={item.title} />
                 <div className="shade" />
                 <div>
-                  <b className="num">0{i + 1}</b>
-                  <h3>{['Indoor Pool', 'Dry Sauna', 'Steam Room'][i]}</h3>
-                  <p>{['Warm water, soft lighting and slow poolside recovery.', 'Cedar heat, deep breathing and thermal contrast.', 'Eucalyptus mist, warm air and a softer reset.'][i]}</p>
+                  <b className="num">{item.id}</b>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
                 </div>
               </article>
             ))}
@@ -279,13 +467,32 @@ export default function App() {
         <div>
           <a href="#home" className="brand">
             <span className="brand-icon gold">✺</span>
-            <span><strong>AURA</strong><small>WELLNESS SPA</small></span>
+            <span>
+              <strong>AURA</strong>
+              <small>WELLNESS SPA</small>
+            </span>
           </a>
-          <p>Thermal pools, saunas, steam rooms, jacuzzis, massage therapy and calm recovery in a premium wellness space.</p>
+          <p>
+            Thermal pools, saunas, steam rooms, jacuzzis, massage therapy and calm recovery in a premium wellness space.
+          </p>
         </div>
-        <div><h4>Explore</h4><a href="#treatments">Treatments</a><a href="#booking">Booking</a><a href="#sauna-library">Gallery</a></div>
-        <div><h4>Visit</h4><p>42 Willow Lane</p><p>Sofia Wellness District</p><p>Daily · 9 AM - 9 PM</p></div>
-        <div><h4>Contact</h4><a href="tel:+359880000000">+359 88 000 0000</a><a href="mailto:hello@aurawellnessspa.com">hello@aurawellnessspa.com</a></div>
+        <div>
+          <h4>Explore</h4>
+          <a href="#treatments">Treatments</a>
+          <a href="#booking">Booking</a>
+          <a href="#sauna-library">Gallery</a>
+        </div>
+        <div>
+          <h4>Visit</h4>
+          <p>42 Willow Lane</p>
+          <p>Sofia Wellness District</p>
+          <p>Daily · 9 AM - 9 PM</p>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <a href="tel:+359880000000">+359 88 000 0000</a>
+          <a href="mailto:hello@aurawellnessspa.com">hello@aurawellnessspa.com</a>
+        </div>
       </footer>
     </div>
   );
