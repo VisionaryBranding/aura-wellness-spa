@@ -1,271 +1,669 @@
-import React, { useMemo, useState } from "react";
-import {
-  ArrowRight,
-  CalendarDays,
-  Check,
-  Clock,
-  Flame,
-  Flower2,
-  Heart,
-  Leaf,
-  Mail,
-  MapPin,
-  Menu,
-  Minus,
-  Moon,
-  Phone,
-  Plus,
-  Search,
-  ShoppingBag,
-  Sparkles,
-  Star,
-  SunMedium,
-  Waves,
-  X
-} from "lucide-react";
+import { useEffect, useMemo, useState } from 'react';
+import './App.css';
 
-const IMG = {
-  finnish: "https://images.unsplash.com/photo-1717356495389-6ab1e5ff9d84?auto=format&fit=crop&w=1600&q=85",
-  wood: "https://images.unsplash.com/photo-1728404259075-209cfb5bb89c?auto=format&fit=crop&w=1600&q=85",
-  electric: "https://images.unsplash.com/photo-1678988227223-45112511eca2?auto=format&fit=crop&w=1600&q=85",
-  infrared: "https://images.unsplash.com/photo-1678988227223-45112511eca2?auto=format&fit=crop&w=1600&q=85",
-  smoke: "https://images.unsplash.com/photo-1759302354553-cf87ceb9135c?auto=format&fit=crop&w=1600&q=85",
-  steam: "https://images.unsplash.com/photo-1739869481946-c054e37a55b1?auto=format&fit=crop&w=1600&q=85",
-  bio: "https://images.unsplash.com/photo-1712659606957-b7395ba9ebb2?auto=format&fit=crop&w=1600&q=85",
-  aroma: "https://images.unsplash.com/photo-1676452458169-318fd3b9a98f?auto=format&fit=crop&w=1600&q=85",
-  herbal: "https://images.unsplash.com/photo-1741601274210-14b7ab1ef99c?auto=format&fit=crop&w=1600&q=85",
-  salt: "https://images.unsplash.com/photo-1755610146367-cc6cac6d6f8a?auto=format&fit=crop&w=1600&q=85",
-  barrel: "https://images.unsplash.com/photo-1759302354886-f2c37dd3dd8c?auto=format&fit=crop&w=1600&q=85",
-  panoramic: "https://images.unsplash.com/photo-1759302353458-3c617bfd428b?auto=format&fit=crop&w=1600&q=85",
-  banya: "https://images.unsplash.com/photo-1739869481946-c054e37a55b1?auto=format&fit=crop&w=1600&q=85",
-  hammam: "https://images.unsplash.com/photo-1755610146367-cc6cac6d6f8a?auto=format&fit=crop&w=1600&q=85",
-  jjimjilbang: "https://images.unsplash.com/photo-1678988227223-45112511eca2?auto=format&fit=crop&w=1600&q=85",
-  pool: "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?auto=format&fit=crop&w=1600&q=85",
-  jacuzzi: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=1600&q=85",
-  massage: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1600&q=85",
-  facial: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1600&q=85",
-  spa: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1600&q=85"
-};
-
-const FALLBACK = IMG.finnish;
-
-const SAUNA_TYPES = [
-  { id: "finnish", name: "Traditional Finnish Sauna", category: "Classic", temp: "80–100°C · dry heat", vibe: "Classic cedar heat, hot stones, löyly steam and deep sweating.", image: IMG.finnish },
-  { id: "wood", name: "Wood-Burning Sauna", category: "Classic", temp: "75–95°C · fire-heated", vibe: "Rustic heat from a real stove with cabin energy and soft smoke notes.", image: IMG.wood },
-  { id: "electric", name: "Electric Sauna", category: "Modern", temp: "70–95°C · controlled dry heat", vibe: "Clean, reliable and easy to control for a premium city spa setup.", image: IMG.electric },
-  { id: "infrared", name: "Infrared Sauna", category: "Recovery", temp: "45–60°C · radiant warmth", vibe: "Lower air temperature with a gentler recovery-focused warmth.", image: IMG.infrared },
-  { id: "smoke", name: "Smoke Sauna", category: "Traditional", temp: "70–90°C · old-world ritual", vibe: "Traditional chimneyless heat, aired before use for a deep smoky atmosphere.", image: IMG.smoke },
-  { id: "steam", name: "Steam Room", category: "Steam", temp: "40–50°C · high humidity", vibe: "Soft misty heat for breathing, skin softness and slow decompression.", image: IMG.steam },
-  { id: "bio", name: "Bio Sauna", category: "Gentle", temp: "50–65°C · gentle humidity", vibe: "A softer sauna for guests who want warmth without maximum intensity.", image: IMG.bio },
-  { id: "aroma", name: "Aromatherapy Sauna", category: "Botanical", temp: "60–80°C · essential oils", vibe: "Dry heat paired with eucalyptus, lavender, cedar or citrus aromatics.", image: IMG.aroma },
-  { id: "herbal", name: "Herbal Sauna", category: "Botanical", temp: "50–75°C · herbal vapor", vibe: "Botanical steam and warm air create a calmer ritual-style heat room.", image: IMG.herbal },
-  { id: "salt", name: "Salt Sauna", category: "Mineral", temp: "45–70°C · mineral atmosphere", vibe: "Salt walls or salt air create a clean mineral spa atmosphere.", image: IMG.salt },
-  { id: "barrel", name: "Barrel Sauna", category: "Outdoor", temp: "70–95°C · outdoor heat", vibe: "A compact outdoor sauna with a curved wooden shape and cozy heat.", image: IMG.barrel },
-  { id: "panoramic", name: "Panoramic Sauna", category: "Luxury", temp: "70–90°C · scenic view", vibe: "Large glass views, quiet heat and a more premium visual experience.", image: IMG.panoramic },
-  { id: "banya", name: "Russian Banya", category: "Cultural", temp: "70–100°C · steam ritual", vibe: "Hot humid sessions often paired with venik branch rituals and cool resets.", image: IMG.banya },
-  { id: "hammam", name: "Turkish Hammam", category: "Cultural", temp: "40–50°C · bathing ritual", vibe: "Steam, warm stone, washing and body polish inside a tiled chamber.", image: IMG.hammam },
-  { id: "jjimjilbang", name: "Korean Jjimjilbang", category: "Cultural", temp: "45–90°C · themed rooms", vibe: "Korean bathhouse culture with kiln rooms, heated floors and social recovery.", image: IMG.jjimjilbang }
+const announcements = [
+  'OPEN DAILY BY APPOINTMENT',
+  'SAUNA · STEAM · POOL · JACUZZI · MASSAGE',
+  'PRIVATE SPA SUITES AVAILABLE',
 ];
 
-const TREATMENTS = [
-  { id: 1, name: "Thermal Spa Day Pass", category: "Thermal", price: 95, duration: "3 hours", badge: "Spa access", image: IMG.pool, description: "Access to the indoor pool, steam room, dry sauna, jacuzzi and recovery lounge.", includes: ["Indoor pool", "Steam room", "Dry sauna", "Jacuzzi"] },
-  { id: 2, name: "Finnish Dry Sauna", category: "Sauna", price: 55, duration: "35 min", badge: "Classic heat", image: IMG.finnish, description: "A classic dry heat room designed for deep warmth, sweating and quiet decompression.", includes: ["Dry heat", "Cedar room", "Cold towels", "Mineral water"] },
-  { id: 3, name: "Nordic Sauna Circuit", category: "Sauna", price: 90, duration: "55 min", badge: "Heat therapy", image: IMG.finnish , description: "A guided heat ritual with dry sauna, cool towel reset and mineral hydration.", includes: ["Dry sauna", "Cold towels", "Recovery lounge", "Mineral water"] },
-  { id: 4, name: "Panoramic Sauna Suite", category: "Sauna", price: 115, duration: "60 min", badge: "Private view", image: IMG.panoramic, description: "A private sauna room with soft lighting, towels, water service and quiet seating.", includes: ["Private sauna", "Robe service", "Quiet seating", "Hydration"] },
-  { id: 5, name: "Herbal Aroma Sauna", category: "Sauna", price: 75, duration: "45 min", badge: "Botanical heat", image: IMG.aroma, description: "Warm dry heat paired with rosemary, eucalyptus and cedar aromatics.", includes: ["Herbal aroma", "Dry sauna", "Cool towel", "Tea"] },
-  { id: 6, name: "Infrared Recovery Sauna", category: "Sauna", price: 80, duration: "40 min", badge: "Recovery", image: IMG.infrared, description: "Lower-temperature heat designed for muscle relaxation and post-workout recovery.", includes: ["Infrared heat", "Recovery towels", "Mineral water", "Quiet room"] },
-  { id: 7, name: "Eucalyptus Steam Room", category: "Steam", price: 60, duration: "30 min", badge: "Breathing ritual", image: IMG.steam, description: "Warm eucalyptus mist for breathing, skin softness and slow decompression.", includes: ["Eucalyptus mist", "Steam room", "Cold towels", "Hydration"] },
-  { id: 8, name: "Hammam Body Polish", category: "Steam", price: 135, duration: "75 min", badge: "Steam ritual", image: IMG.hammam, description: "Steam, black soap cleanse, full-body polish and warm rinse for a clean spa reset.", includes: ["Steam room", "Body polish", "Warm rinse", "Body oil"] },
-  { id: 9, name: "Salt Steam Chamber", category: "Steam", price: 70, duration: "35 min", badge: "Mineral mist", image: IMG.salt, description: "A mineral steam experience with soft salt air and gentle heat.", includes: ["Salt steam", "Warm mist", "Quiet room", "Mineral water"] },
-  { id: 10, name: "Private Jacuzzi Suite", category: "Jacuzzi", price: 160, duration: "75 min", badge: "Private soak", image: IMG.jacuzzi, description: "Private warm-water hydrotherapy with low light, robe service and calm seating.", includes: ["Private jacuzzi", "Robe service", "Low lighting", "Mineral water"] },
-  { id: 11, name: "Indoor Thermal Pool", category: "Pool", price: 70, duration: "90 min", badge: "Pool access", image: IMG.pool, description: "Warm indoor pool access with soft lighting, towels and poolside loungers.", includes: ["Indoor pool", "Loungers", "Towels", "Water service"] },
-  { id: 12, name: "Deep Calm Massage", category: "Massage", price: 115, duration: "60 min", badge: "Tension relief", image: IMG.massage, description: "Slow pressure, breath-led pacing and warm oil to release shoulders, back and nervous system tension.", includes: ["Deep pressure", "Warm oil", "Neck focus", "Quiet room"] },
-  { id: 13, name: "Botanical Glow Facial", category: "Facials", price: 130, duration: "70 min", badge: "Glow", image: IMG.facial, description: "A hydrating facial with sculpting massage, botanical masks and a luminous calming finish.", includes: ["Cleanse", "Sculpting massage", "Hydration mask", "SPF finish"] },
-  { id: 14, name: "Full Wellness Escape", category: "Thermal", price: 310, duration: "Half day", badge: "Complete day", image: IMG.spa, description: "Pool, sauna, jacuzzi, steam room, massage and facial combined into one premium spa escape.", includes: ["Pool access", "Sauna circuit", "Massage", "Facial"] }
+const heroLabels = [
+  { id: '01', title: 'Sauna', className: 'top-left' },
+  { id: '02', title: 'Steam', className: 'mid-right' },
+  { id: '03', title: 'Jacuzzi', className: 'bottom-left' },
 ];
 
-const CATEGORIES = ["All", "Thermal", "Sauna", "Steam", "Jacuzzi", "Pool", "Massage", "Facials"];
-
-const GALLERY = [
-  IMG.finnish,
-  IMG.panoramic,
-  IMG.steam,
-  IMG.facial,
-  IMG.hammam,
-  IMG.barrel
+const saunaItems = [
+  {
+    id: 1,
+    title: 'Traditional Finnish Sauna',
+    category: 'Sauna',
+    tag: 'Classic heat',
+    temperature: '80–100°C · dry heat',
+    description: 'Classic cedar heat for deep thermal contrast and full-body reset.',
+    image:
+      'https://images.unsplash.com/photo-1519834022362-c88f8b4ff8f2?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 2,
+    title: 'Wood-Burning Sauna',
+    category: 'Sauna',
+    tag: 'Heritage heat',
+    temperature: '75–95°C · fire-heated',
+    description: 'A slower, more atmospheric heat ritual with a natural timber aroma.',
+    image:
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 3,
+    title: 'Steam Room',
+    category: 'Steam',
+    tag: 'Eucalyptus mist',
+    temperature: '40–50°C · high humidity',
+    description: 'Warm fog, softened breathing and a gentler approach to heat recovery.',
+    image:
+      'https://images.unsplash.com/photo-1519822473476-5a8d4ec9f0d9?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 4,
+    title: 'Infrared Sauna',
+    category: 'Sauna',
+    tag: 'Radiant warmth',
+    temperature: '45–60°C · infrared',
+    description: 'Targeted warming that feels lighter while still supporting recovery.',
+    image:
+      'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 5,
+    title: 'Salt Sauna',
+    category: 'Thermal',
+    tag: 'Mineral air',
+    temperature: '45–70°C · mineral atmosphere',
+    description: 'Salt-rich air adds a clean, restorative feeling to the sauna experience.',
+    image:
+      'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 6,
+    title: 'Herbal Steam Chamber',
+    category: 'Steam',
+    tag: 'Botanical steam',
+    temperature: '42–48°C · infused herbs',
+    description: 'Aromatic steam therapy layered with herbal notes and softer humidity.',
+    image:
+      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 7,
+    title: 'Indoor Recovery Pool',
+    category: 'Pool',
+    tag: 'Warm water',
+    temperature: '34°C · hydro-relaxation',
+    description: 'Gentle warm water designed for floating, unwinding and quiet recovery.',
+    image:
+      'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 8,
+    title: 'Cold Contrast Plunge',
+    category: 'Pool',
+    tag: 'Recovery shock',
+    temperature: '8–12°C · contrast',
+    description: 'A sharp refresh between heat sessions to increase contrast and clarity.',
+    image:
+      'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 9,
+    title: 'Hydrotherapy Jacuzzi',
+    category: 'Jacuzzi',
+    tag: 'Private soak',
+    temperature: '36–38°C · bubbling massage',
+    description: 'Effervescent water pressure helps relax sore muscles after the heat circuit.',
+    image:
+      'https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 10,
+    title: 'Panoramic Sauna',
+    category: 'Sauna',
+    tag: 'Scenic view',
+    temperature: '70–90°C · elevated view',
+    description: 'A wide-view room that combines slow heat with a more immersive environment.',
+    image:
+      'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 11,
+    title: 'Massage Therapy',
+    category: 'Massage',
+    tag: 'Hands-on reset',
+    temperature: '50 min · custom pressure',
+    description: 'Swedish and deep-tissue techniques tailored to stress, tension and posture.',
+    image:
+      'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: 12,
+    title: 'Aromatherapy Facial',
+    category: 'Facials',
+    tag: 'Glow ritual',
+    temperature: '45 min · botanical care',
+    description: 'A restoring skin ritual with cleansing, massage and a calming finish.',
+    image:
+      'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=1000&q=80',
+  },
 ];
+
+const treatmentHighlights = [
+  {
+    title: 'Thermal Spa Day Pass',
+    eyebrow: 'Spa access',
+    price: '$95',
+    description: 'Access to the indoor pool, steam room, dry sauna, jacuzzi and quiet lounge.',
+    image:
+      'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=900&q=80',
+  },
+  {
+    title: 'Nordic Sauna Circuit',
+    eyebrow: 'Heat therapy',
+    price: '$90',
+    description: 'A guided heat ritual with dry sauna, cool towel reset and mineral hydration.',
+    image:
+      'https://images.unsplash.com/photo-1519834022362-c88f8b4ff8f2?auto=format&fit=crop&w=900&q=80',
+  },
+  {
+    title: 'Private Jacuzzi Escape',
+    eyebrow: 'Private soak',
+    price: '$145',
+    description: 'A quieter private soak with herbal tea, mood lighting and recovery time.',
+    image:
+      'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=900&q=80',
+  },
+];
+
+const packages = [
+  {
+    icon: 'waves',
+    price: '$120',
+    title: 'Full Thermal Circuit',
+    description: 'Pool access, dry sauna, steam room, jacuzzi and quiet lounge recovery.',
+  },
+  {
+    icon: 'leaf',
+    price: '$150',
+    title: 'Steam & Hammam Ritual',
+    description: 'Steam chamber, body polish, warm rinse, botanical oil and herbal tea.',
+  },
+  {
+    icon: 'heart',
+    price: '$260',
+    title: 'Jacuzzi Escape for Two',
+    description: 'Private jacuzzi time, synchronized bodywork and a calm recovery lounge.',
+  },
+];
+
+const facilities = [
+  {
+    id: '01',
+    title: 'Indoor Pool',
+    description: 'Warm water, soft lighting and slow poolside recovery.',
+    image:
+      'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: '02',
+    title: 'Dry Sauna',
+    description: 'Cedar heat, deep breathing and thermal contrast.',
+    image:
+      'https://images.unsplash.com/photo-1519834022362-c88f8b4ff8f2?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    id: '03',
+    title: 'Steam Room',
+    description: 'Eucalyptus mist, warm air and a softer reset.',
+    image:
+      'https://images.unsplash.com/photo-1519822473476-5a8d4ec9f0d9?auto=format&fit=crop&w=1000&q=80',
+  },
+];
+
+const categories = ['All', 'Thermal', 'Sauna', 'Steam', 'Jacuzzi', 'Pool', 'Massage', 'Facials'];
+
+function Icon({ name }) {
+  switch (name) {
+    case 'moon':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a9 9 0 1 0 11 11Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case 'calendar':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="5" width="16" height="15" rx="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M8 3v4M16 3v4M4 10h16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      );
+    case 'arrow':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case 'search':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+          <path d="m16 16 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      );
+    case 'waves':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 8c2 2 4 2 6 0s4-2 6 0 4 2 4 2M4 14c2 2 4 2 6 0s4-2 6 0 4 2 4 2" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case 'leaf':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 4c-6.5 0-11 4.7-11 10.5A5.5 5.5 0 0 0 12.5 20C18.3 20 23 15.5 23 9c0-1.7-.3-3.4-1-5-.9.5-2.4 0-4 0Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M8 13c2.5-.2 5-1.6 7-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      );
+    case 'heart':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 20.6 4.8 13.8a4.8 4.8 0 0 1 6.8-6.8L12 7.4l.4-.4a4.8 4.8 0 0 1 6.8 6.8L12 20.6Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case 'logo':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M12 6v12M8.5 8.5c0 1.7 1.6 3 3.5 3s3.5-1.3 3.5-3M8.5 15.5c0-1.7 1.6-3 3.5-3s3.5 1.3 3.5 3M8.2 12h7.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
 
 export default function App() {
-  const [page, setPage] = useState("home");
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [selected, setSelected] = useState(TREATMENTS[0]);
-  const [category, setCategory] = useState("All");
-  const [query, setQuery] = useState("");
-  const [booking, setBooking] = useState([]);
-  const [theme, setTheme] = useState("light");
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [search, setSearch] = useState('');
+  const [themeDark, setThemeDark] = useState(false);
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  const filtered = useMemo(() => {
-    return TREATMENTS.filter((item) => {
-      const categoryMatch = category === "All" || item.category === category;
-      const searchMatch = `${item.name} ${item.category} ${item.description} ${item.includes.join(" ")}`.toLowerCase().includes(query.toLowerCase());
-      return categoryMatch && searchMatch;
+  useEffect(() => {
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    reveals.forEach((element) => observer.observe(element));
+
+    const handleScroll = () => {
+      const progressBar = document.querySelector('.progress-bar');
+      if (!progressBar) return;
+      const scrollTop = window.scrollY;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = height > 0 ? (scrollTop / height) * 100 : 0;
+      progressBar.style.width = `${progress}%`;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      reveals.forEach((element) => observer.unobserve(element));
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const closeMenu = () => setActiveMenu(null);
+    window.addEventListener('scroll', closeMenu, { passive: true });
+    return () => window.removeEventListener('scroll', closeMenu);
+  }, []);
+
+  const filteredItems = useMemo(() => {
+    return saunaItems.filter((item) => {
+      const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory || (selectedCategory === 'Thermal' && ['Sauna', 'Steam', 'Pool', 'Jacuzzi'].includes(item.category));
+      const haystack = `${item.title} ${item.description} ${item.category} ${item.tag}`.toLowerCase();
+      const matchesSearch = haystack.includes(search.toLowerCase());
+      return matchesCategory && matchesSearch;
     });
-  }, [category, query]);
-
-  const bookingCount = booking.reduce((sum, item) => sum + item.qty, 0);
-  const bookingTotal = booking.reduce((sum, item) => sum + item.qty * item.price, 0);
-
-  function goTo(next) {
-    setPage(next);
-    setMobileOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function openTreatment(item) {
-    setSelected(item);
-    goTo("detail");
-  }
-
-  function addToBooking(item) {
-    setBooking((items) => {
-      const existing = items.find((bookingItem) => bookingItem.id === item.id);
-      if (existing) return items.map((bookingItem) => bookingItem.id === item.id ? { ...bookingItem, qty: bookingItem.qty + 1 } : bookingItem);
-      return [...items, { ...item, qty: 1 }];
-    });
-  }
-
-  function updateQty(id, change) {
-    setBooking((items) => items.map((item) => item.id === id ? { ...item, qty: Math.max(0, item.qty + change) } : item).filter((item) => item.qty > 0));
-  }
+  }, [selectedCategory, search]);
 
   return (
-    <div className={`site ${theme === "dark" ? "darkMode" : ""}`}>
-      <TopNotice />
-      <Header page={page} goTo={goTo} bookingCount={bookingCount} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} theme={theme} setTheme={setTheme} />
+    <div className={`app-shell ${themeDark ? 'theme-dark' : ''}`}>
+      <div className="progress-track">
+        <div className="progress-bar" />
+      </div>
+
+      <header className="top-strip">
+        <div className="marquee">
+          {announcements.concat(announcements).map((item, index) => (
+            <span key={`${item}-${index}`}>{item}</span>
+          ))}
+        </div>
+      </header>
+
+      <header className="main-header">
+        <a href="#home" className="brand">
+          <span className="brand-mark">
+            <Icon name="logo" />
+          </span>
+          <span>
+            <strong>AURA</strong>
+            <small>WELLNESS SPA</small>
+          </span>
+        </a>
+
+        <button className="mobile-toggle" onClick={() => setMobileNavOpen((value) => !value)} aria-label="Toggle navigation">
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <div className={`header-center ${mobileNavOpen ? 'open' : ''}`}>
+          <nav className="nav-pill" onMouseLeave={() => setActiveMenu(null)}>
+            <div
+              className={`nav-item has-menu ${activeMenu === 'treatments' ? 'active' : ''}`}
+              onMouseEnter={() => setActiveMenu('treatments')}
+            >
+              <button type="button" onClick={() => setActiveMenu(activeMenu === 'treatments' ? null : 'treatments')}>
+                Treatments
+              </button>
+              <div className={`mega-menu ${activeMenu === 'treatments' ? 'show' : ''}`}>
+                <div>
+                  <h4>Thermal circuit</h4>
+                  <a href="#sauna-library">Sauna menu</a>
+                  <a href="#facilities">Steam rooms</a>
+                  <a href="#packages">Jacuzzi recovery</a>
+                </div>
+                <div>
+                  <h4>Body rituals</h4>
+                  <a href="#treatments">Massage</a>
+                  <a href="#treatments">Facials</a>
+                  <a href="#about">Private suite</a>
+                </div>
+                <aside>
+                  <h4>Signature circuit</h4>
+                  <p>Pool → sauna → steam → jacuzzi → recovery lounge.</p>
+                  <a href="#booking-cta">Plan a visit</a>
+                </aside>
+              </div>
+            </div>
+
+            <div
+              className={`nav-item has-menu ${activeMenu === 'booking' ? 'active' : ''}`}
+              onMouseEnter={() => setActiveMenu('booking')}
+            >
+              <button type="button" onClick={() => setActiveMenu(activeMenu === 'booking' ? null : 'booking')}>
+                Booking
+              </button>
+              <div className={`small-menu ${activeMenu === 'booking' ? 'show' : ''}`}>
+                <a href="#booking-cta">Book spa day</a>
+                <a href="#booking-cta">Reserve private suite</a>
+              </div>
+            </div>
+
+            <a className="nav-item" href="#about">About</a>
+            <a className="nav-item" href="#sauna-library">Gallery</a>
+            <a className="nav-item" href="#footer">Contact</a>
+          </nav>
+        </div>
+
+        <div className="header-actions">
+          <button className="icon-button" type="button" onClick={() => setThemeDark((value) => !value)} aria-label="Toggle theme">
+            <Icon name="moon" />
+          </button>
+          <a className="ghost-button" href="#packages">
+            <Icon name="calendar" />
+            <span>Plan</span>
+          </a>
+          <a className="solid-button" href="#booking-cta">Book now</a>
+        </div>
+      </header>
+
       <main>
-        {page === "home" && <HomePage goTo={goTo} setCategory={setCategory} openTreatment={openTreatment} addToBooking={addToBooking} />}
-        {page === "treatments" && <TreatmentsPage category={category} setCategory={setCategory} query={query} setQuery={setQuery} items={filtered} openTreatment={openTreatment} addToBooking={addToBooking} />}
-        {page === "detail" && <DetailPage item={selected} goTo={goTo} addToBooking={addToBooking} />}
-        {page === "booking" && <BookingPage booking={booking} total={bookingTotal} updateQty={updateQty} goTo={goTo} />}
-        {page === "about" && <AboutPage />}
-        {page === "gallery" && <GalleryPage />}
-        {page === "contact" && <ContactPage />}
+        <section className="hero section-edge" id="home">
+          <div className="hero-copy reveal">
+            <p className="section-kicker">THERMAL RESORT CONCEPT</p>
+            <h1>Quiet heat rooms, soft water and full-body recovery.</h1>
+            <p className="hero-description">
+              AURA is a premium wellness spa built around sauna rituals, steam rooms, indoor pools, private jacuzzis, massage therapy and slow recovery lounges.
+            </p>
+            <div className="hero-actions reveal">
+              <a className="solid-button large" href="#booking-cta">
+                <span>Book a spa day</span>
+                <Icon name="arrow" />
+              </a>
+              <a className="ghost-outline" href="#treatments">Explore treatments</a>
+            </div>
+          </div>
+
+          <div className="hero-visual reveal">
+            <img
+              src="https://images.unsplash.com/photo-1519834022362-c88f8b4ff8f2?auto=format&fit=crop&w=1400&q=80"
+              alt="Premium spa sauna room"
+            />
+            {heroLabels.map((label) => (
+              <div className={`hero-label ${label.className}`} key={label.id}>
+                <span>{label.id}</span>
+                <strong>{label.title}</strong>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="stats-band reveal">
+          <article>
+            <strong>15</strong>
+            <span>sauna types</span>
+          </article>
+          <article>
+            <strong>4</strong>
+            <span>spa facility zones</span>
+          </article>
+          <article>
+            <strong>4.9</strong>
+            <span>guest rating</span>
+          </article>
+          <article>
+            <strong>Daily</strong>
+            <span>open by appointment</span>
+          </article>
+        </section>
+
+        <section className="section reveal" id="sauna-library">
+          <div className="section-heading">
+            <div>
+              <p className="section-kicker">SAUNA WORLD</p>
+              <h2>Heat, water and recovery rituals.</h2>
+              <p>Filter the full menu by sauna, steam, jacuzzi, pool, massage or facial treatments.</p>
+            </div>
+          </div>
+
+          <div className="filter-bar reveal">
+            <div className="chip-row">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  className={`chip ${selectedCategory === category ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(category)}
+                  type="button"
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+            <label className="search-box">
+              <Icon name="search" />
+              <input
+                type="text"
+                placeholder="Search rituals..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+            </label>
+          </div>
+
+          <div className="sauna-grid">
+            {filteredItems.map((item, index) => (
+              <article className={`sauna-card reveal ${index === 0 ? 'featured' : ''}`} key={item.id}>
+                <img src={item.image} alt={item.title} />
+                <div className="sauna-card-overlay" />
+                <div className="sauna-card-content">
+                  <span className="pill-tag">{item.tag}</span>
+                  <div className="sauna-card-meta">
+                    <span className="index-badge">{String(index + 1).padStart(2, '0')}</span>
+                    <h3>{item.title}</h3>
+                    <strong>{item.temperature}</strong>
+                    <p>{item.description}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="section reveal" id="treatments">
+          <div className="section-heading compact">
+            <div>
+              <p className="section-kicker">TREATMENTS</p>
+              <h2>Saunas, pools, jacuzzis and massage.</h2>
+              <p>A complete spa experience focused on water, heat, steam and hands-on recovery.</p>
+            </div>
+          </div>
+
+          <div className="treatment-grid">
+            {treatmentHighlights.map((item) => (
+              <article className="treatment-card reveal" key={item.title}>
+                <div className="treatment-image-wrap">
+                  <img src={item.image} alt={item.title} />
+                  <span className="pill-tag bright">{item.eyebrow}</span>
+                </div>
+                <div className="treatment-content">
+                  <div className="title-row">
+                    <h3>{item.title}</h3>
+                    <strong>{item.price}</strong>
+                  </div>
+                  <p>{item.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="about-panel reveal" id="about">
+          <div className="about-image">
+            <img
+              src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1400&q=80"
+              alt="Spa oil treatment"
+            />
+          </div>
+          <div className="about-copy">
+            <p className="section-kicker">THE AURA APPROACH</p>
+            <h2>A complete spa escape, not just a treatment.</h2>
+            <p>
+              The experience is built as a full wellness circuit: warm pool, dry sauna, steam room, jacuzzi, treatment rooms and a quiet recovery lounge after every ritual.
+            </p>
+            <ul>
+              <li>Dry sauna and eucalyptus steam</li>
+              <li>Indoor pool and hydrotherapy jacuzzi</li>
+              <li>Massage, facials and body rituals</li>
+            </ul>
+            <a className="soft-button" href="#footer">Learn our philosophy</a>
+          </div>
+        </section>
+
+        <section className="section reveal" id="packages">
+          <div className="section-heading compact">
+            <div>
+              <p className="section-kicker">PACKAGES</p>
+              <h2>Build your spa day.</h2>
+            </div>
+          </div>
+
+          <div className="package-grid">
+            {packages.map((item) => (
+              <article className="package-card reveal" key={item.title}>
+                <span className="package-icon">
+                  <Icon name={item.icon} />
+                </span>
+                <strong className="package-price">{item.price}</strong>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="section reveal" id="facilities">
+          <div className="section-heading compact">
+            <div>
+              <p className="section-kicker">SPA FACILITIES</p>
+              <h2>Pools, heat rooms and quiet recovery spaces.</h2>
+              <p>AURA now feels like a full spa resort, not just a simple treatment page.</p>
+            </div>
+          </div>
+
+          <div className="facility-grid">
+            {facilities.map((item) => (
+              <article className="facility-card reveal" key={item.title}>
+                <img src={item.image} alt={item.title} />
+                <div className="facility-overlay" />
+                <div className="facility-copy">
+                  <span className="index-badge">{item.id}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="booking-cta reveal" id="booking-cta">
+          <div>
+            <p className="section-kicker">PRIVATE SUITES · SPA DAYS · RITUAL PACKAGES</p>
+            <h2>Ready to book your escape?</h2>
+            <p>
+              Reserve a full spa day, plan a couple’s visit or build your own custom heat and water circuit.
+            </p>
+          </div>
+          <div className="booking-actions">
+            <a className="solid-button large" href="mailto:hello@aurawellnessspa.com">Book by email</a>
+            <a className="ghost-outline dark" href="tel:+359880000000">Call now</a>
+          </div>
+        </section>
       </main>
-      <Footer goTo={goTo} />
+
+      <footer className="site-footer" id="footer">
+        <div className="footer-brand">
+          <a href="#home" className="brand footer-logo">
+            <span className="brand-mark">
+              <Icon name="logo" />
+            </span>
+            <span>
+              <strong>AURA</strong>
+              <small>WELLNESS SPA</small>
+            </span>
+          </a>
+          <p>Thermal pools, saunas, steam rooms, jacuzzis, massage therapy and calm recovery in a premium wellness space.</p>
+        </div>
+
+        <div>
+          <h4>Explore</h4>
+          <a href="#treatments">Treatments</a>
+          <a href="#booking-cta">Booking</a>
+          <a href="#sauna-library">Gallery</a>
+        </div>
+
+        <div>
+          <h4>Visit</h4>
+          <p>42 Willow Lane</p>
+          <p>Sofia Wellness District</p>
+          <p>Daily · 9 AM - 9 PM</p>
+        </div>
+
+        <div>
+          <h4>Contact</h4>
+          <a href="tel:+359880000000">+359 88 000 0000</a>
+          <a href="mailto:hello@aurawellnessspa.com">hello@aurawellnessspa.com</a>
+          <a href="#booking-cta">Reserve appointment</a>
+        </div>
+      </footer>
     </div>
   );
 }
-
-function TopNotice() {
-  return <div className="topNotice"><span>Open daily by appointment</span><span>Sauna · Steam · Pool · Jacuzzi · Massage</span><span>Private spa suites available</span></div>;
-}
-
-function Header({ page, goTo, bookingCount, mobileOpen, setMobileOpen, theme, setTheme }) {
-  const nav = [["home", "Home"], ["treatments", "Treatments"], ["booking", "Booking"], ["about", "About"], ["gallery", "Gallery"], ["contact", "Contact"]];
-  return (
-    <header className="header">
-      <div className="container headerInner">
-        <button className="brand" onClick={() => goTo("home")}>
-          <span className="brandMark"><Flower2 size={24} /></span>
-          <span><strong>AURA</strong><small>Wellness Spa</small></span>
-        </button>
-        <nav className="desktopNav">
-          <div className={`navItem ${page === "treatments" ? "activeItem" : ""}`}>
-            <span className="navTrigger" tabIndex="0">Treatments</span>
-            <div className="megaMenu">
-              <div><strong>Thermal circuit</strong><button onClick={() => { goTo("treatments"); }}>Sauna menu</button><button onClick={() => { goTo("treatments"); }}>Steam rooms</button><button onClick={() => { goTo("treatments"); }}>Jacuzzi recovery</button></div>
-              <div><strong>Body rituals</strong><button onClick={() => goTo("treatments")}>Massage</button><button onClick={() => goTo("treatments")}>Facials</button><button onClick={() => goTo("booking")}>Private suite</button></div>
-              <div className="megaFeature"><strong>Signature circuit</strong><p>Pool → sauna → steam → jacuzzi → recovery lounge.</p><button onClick={() => goTo("booking")}>Plan a visit</button></div>
-            </div>
-          </div>
-          <div className={`navItem ${page === "booking" ? "activeItem" : ""}`}><span className="navTrigger" tabIndex="0">Booking</span><div className="miniMenu"><button onClick={() => goTo("booking")}>Book spa day</button><button onClick={() => goTo("booking")}>Reserve private suite</button></div></div>
-          <div className={`navItem ${page === "about" ? "activeItem" : ""}`}><span className="navTrigger" tabIndex="0">About</span><div className="miniMenu"><button onClick={() => goTo("about")}>Our philosophy</button><button onClick={() => goTo("about")}>Thermal etiquette</button></div></div>
-          <button className={page === "gallery" ? "active" : ""} onClick={() => goTo("gallery")}>Gallery</button>
-          <button className={page === "contact" ? "active" : ""} onClick={() => goTo("contact")}>Contact</button>
-        </nav>
-        <div className="headerActions">
-          <button className="iconButton" onClick={() => setTheme(theme === "light" ? "dark" : "light")} aria-label="Toggle theme">{theme === "light" ? <Moon size={19} /> : <SunMedium size={19} />}</button>
-          <button className="bookingChip" onClick={() => goTo("booking")}><ShoppingBag size={18} /><span>Plan</span>{bookingCount > 0 && <b>{bookingCount}</b>}</button>
-          <button className="bookNow" onClick={() => goTo("booking")}>Book now</button>
-          <button className="mobileButton" onClick={() => setMobileOpen(true)}><Menu size={22} /></button>
-        </div>
-      </div>
-      {mobileOpen && <div className="mobileLayer"><div className="mobilePanel"><div className="mobilePanelTop"><strong>AURA Wellness</strong><button onClick={() => setMobileOpen(false)}><X size={22} /></button></div>{nav.map(([id, label]) => <button key={id} onClick={() => goTo(id)}>{label}</button>)}</div></div>}
-    </header>
-  );
-}
-
-function HomePage({ goTo, setCategory, openTreatment, addToBooking }) {
-  const featured = [TREATMENTS[0], TREATMENTS[2], TREATMENTS[9]];
-  return (
-    <>
-      <section className="hero">
-        <div className="heroOrbs" />
-        <div className="container heroGrid">
-          <div className="heroCopy reveal">
-            <div className="eyebrow">Thermal resort concept</div>
-            <h1>Quiet heat rooms, soft water and full-body recovery.</h1>
-            <p>AURA is a premium wellness spa built around sauna rituals, steam rooms, indoor pools, private jacuzzis, massage therapy and slow recovery lounges.</p>
-            <div className="heroActions"><button className="primaryBtn" onClick={() => goTo("booking")}>Book a spa day <ArrowRight size={18} /></button><button className="secondaryBtn" onClick={() => goTo("treatments")}>Explore treatments</button></div>
-          </div>
-          <div className="cleanHeroVisual">
-            <div className="cleanHeroStage">
-              <img src="https://images.unsplash.com/photo-1583417267826-aebc4d1542e1?auto=format&fit=crop&w=1600&q=85" alt="Luxury sauna" onError={(e) => { e.currentTarget.src = FALLBACK; }} />
-              <div className="glassPanel panelSauna"><span>01</span><strong>Sauna</strong></div>
-              <div className="glassPanel panelSteam"><span>02</span><strong>Steam</strong></div>
-              <div className="glassPanel panelJacuzzi"><span>03</span><strong>Jacuzzi</strong></div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="container statsPanel reveal"><article><strong>15</strong><span>sauna types</span></article><article><strong>4</strong><span>spa facility zones</span></article><article><strong>4.9</strong><span>guest rating</span></article><article><strong>Daily</strong><span>open by appointment</span></article></section>
-      <SaunaTypesShowcase goTo={goTo} setCategory={setCategory} />
-      <section className="container"><SectionHead eyebrow="Treatments" title="Saunas, pools, jacuzzis and massage" text="A complete spa experience focused on water, heat, steam and hands-on recovery." /><div className="treatmentGrid stagger">{featured.map((item) => <TreatmentCard key={item.id} item={item} openTreatment={openTreatment} addToBooking={addToBooking} />)}</div></section>
-      <section className="container splitFeature reveal"><div className="splitImage"><img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1600&q=85" alt="Massage room" onError={(e) => { e.currentTarget.src = FALLBACK; }} /></div><div className="splitCopy stagger"><div className="eyebrow">The AURA approach</div><h2>A complete spa escape, not just a treatment.</h2><p>The experience is built as a full wellness circuit: warm pool, dry sauna, steam room, jacuzzi, treatment rooms and a quiet recovery lounge after every ritual.</p><ul><li><Check size={18} /> Dry sauna and eucalyptus steam</li><li><Check size={18} /> Indoor pool and hydrotherapy jacuzzi</li><li><Check size={18} /> Massage, facials and body rituals</li></ul><button className="primaryBtn" onClick={() => goTo("about")}>Learn our philosophy</button></div></section>
-      <section className="container packages reveal"><SectionHead eyebrow="Packages" title="Build your spa day" /><div className="packageGrid stagger"><PackageCard icon={Waves} title="Full Thermal Circuit" price="$120" text="Pool access, dry sauna, steam room, jacuzzi and quiet lounge recovery." /><PackageCard icon={Leaf} title="Steam & Hammam Ritual" price="$150" text="Steam chamber, body polish, warm rinse, botanical oil and herbal tea." /><PackageCard icon={Heart} title="Jacuzzi Escape for Two" price="$260" text="Private jacuzzi time, synchronized bodywork and a calm recovery lounge." /></div></section>
-      <section className="container spaZones reveal"><SectionHead eyebrow="Spa facilities" title="Pools, heat rooms and quiet recovery spaces" text="AURA now feels like a full spa resort, not just a simple treatment page." /><div className="zoneGrid stagger"><article className="zoneCard pool"><span>01</span><h3>Indoor Pool</h3><p>Warm water, soft lighting and slow poolside recovery.</p></article><article className="zoneCard sauna"><span>02</span><h3>Dry Sauna</h3><p>Cedar heat, deep breathing and thermal contrast.</p></article><article className="zoneCard steam"><span>03</span><h3>Steam Room</h3><p>Eucalyptus mist, warm air and a softer reset.</p></article></div></section>
-    </>
-  );
-}
-
-function SaunaTypesShowcase({ goTo, setCategory }) {
-  const [activeSauna, setActiveSauna] = useState(SAUNA_TYPES[0]);
-  function openSaunas() { setCategory("Sauna"); goTo("treatments"); }
-  return (
-    <section className="container saunaShowcase reveal" id="sauna-types">
-      <SectionHead eyebrow="Sauna world" title="15 sauna experiences, from Nordic dry heat to steam rituals." text="AURA turns the sauna menu into a full thermal library — classic, modern, mineral, botanical and global bathing rituals." />
-      <div className="saunaFeaturePanel">
-        <div className="saunaFeatureImage"><img src={activeSauna.image} alt={activeSauna.name} onError={(e) => { e.currentTarget.src = FALLBACK; }} /><div className="saunaFeatureOverlay"><span>{activeSauna.temp}</span><h3>{activeSauna.name}</h3><p>{activeSauna.vibe}</p><button className="primaryBtn" onClick={openSaunas}>Explore sauna menu <ArrowRight size={18} /></button></div></div>
-        <div className="saunaTypeGrid stagger">{SAUNA_TYPES.map((sauna, index) => <button key={sauna.id} className={`saunaTypeCard ${activeSauna.id === sauna.id ? "active" : ""}`} onMouseEnter={() => setActiveSauna(sauna)} onFocus={() => setActiveSauna(sauna)} onClick={() => setActiveSauna(sauna)}><img src={sauna.image} alt="" onError={(e) => { e.currentTarget.src = FALLBACK; }} /><span>{String(index + 1).padStart(2, "0")}</span><strong>{sauna.name}</strong><small>{sauna.temp}</small></button>)}</div>
-      </div>
-    </section>
-  );
-}
-
-function TreatmentsPage({ category, setCategory, query, setQuery, items, openTreatment, addToBooking }) {
-  return <div className="container pagePad"><PageHero eyebrow="Treatments" title="Heat, water and recovery rituals." text="Filter the full menu by sauna, steam, jacuzzi, pool, massage or facial treatments." /><div className="toolbar"><div className="tabs">{CATEGORIES.map((cat) => <button key={cat} className={category === cat ? "active" : ""} onClick={() => setCategory(cat)}>{cat}</button>)}</div><label className="searchBox"><Search size={18} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search rituals..." /></label></div>{items.length === 0 ? <div className="emptyState"><Search size={42} /><h2>No matching treatments.</h2><p>Try another category or search term.</p></div> : <div className="treatmentGrid full stagger">{items.map((item) => <TreatmentCard key={item.id} item={item} openTreatment={openTreatment} addToBooking={addToBooking} />)}</div>}</div>;
-}
-
-function TreatmentCard({ item, openTreatment, addToBooking }) {
-  return <article className="treatmentCard"><div className="treatmentImage"><img src={item.image} alt={item.name} onError={(e) => { e.currentTarget.src = FALLBACK; }} /><span>{item.badge}</span></div><div className="treatmentBody"><div className="titleRow"><h3>{item.name}</h3><strong>${item.price}</strong></div><p>{item.description}</p><div className="metaRow"><span><Clock size={14} /> {item.duration}</span><span><Star size={14} /> {item.category}</span></div><div className="cardActions"><button className="smallPrimary" onClick={() => openTreatment(item)}>View details</button><button className="ghostBtn" onClick={() => addToBooking(item)}>Add to plan</button></div></div></article>;
-}
-
-function DetailPage({ item, goTo, addToBooking }) {
-  return <div className="container pagePad"><button className="backBtn" onClick={() => goTo("treatments")}>Back to treatments</button><section className="detailLayout reveal"><div className="detailImage"><img src={item.image} alt={item.name} onError={(e) => { e.currentTarget.src = FALLBACK; }} /></div><div className="detailPanel"><div className="eyebrow">{item.category}</div><h1>{item.name}</h1><p>{item.description}</p><div className="detailStats"><InfoBox label="Duration" value={item.duration} /><InfoBox label="Price" value={`$${item.price}`} /></div><div className="includeList">{item.includes.map((inc) => <span key={inc}><Check size={15} /> {inc}</span>)}</div><button className="primaryBtn" onClick={() => addToBooking(item)}>Add to booking plan</button></div></section></div>;
-}
-
-function BookingPage({ booking, total, updateQty, goTo }) {
-  return <div className="container pagePad"><PageHero eyebrow="Booking" title="Plan your visit." text="This is a portfolio demo booking flow. Select services and review your estimated appointment plan." />{booking.length === 0 ? <div className="emptyState"><CalendarDays size={48} /><h2>No treatments selected yet.</h2><p>Browse treatments and add a service to your plan.</p><button className="primaryBtn" onClick={() => goTo("treatments")}>Explore treatments</button></div> : <section className="bookingLayout reveal"><div className="bookingList">{booking.map((item) => <article className="bookingItem" key={item.id}><img src={item.image} alt={item.name} onError={(e) => { e.currentTarget.src = FALLBACK; }} /><div><h3>{item.name}</h3><p>{item.duration} · ${item.price}</p></div><div className="qty"><button onClick={() => updateQty(item.id, -1)}><Minus size={15} /></button><strong>{item.qty}</strong><button onClick={() => updateQty(item.id, 1)}><Plus size={15} /></button></div></article>)}</div><aside className="bookingSummary"><h3>Appointment summary</h3><div><span>Services</span><strong>${total}</strong></div><div><span>Guest tea ritual</span><strong>Included</strong></div><div><span>Deposit due today</span><strong>${Math.round(total * 0.25)}</strong></div><div className="summaryTotal"><span>Estimated total</span><strong>${total}</strong></div><button className="primaryBtn">Reserve demo</button><p>No payment is processed. This is a portfolio booking demo.</p></aside></section>}<section className="bookingForm reveal"><h2>Preferred appointment details</h2><div className="formGrid"><Field label="Name" placeholder="Your name" /><Field label="Email" placeholder="you@example.com" /><Field label="Preferred date" placeholder="Friday, June 14" /><Field label="Preferred time" placeholder="6:30 PM" /></div><label className="field"><span>Notes</span><textarea rows="6" placeholder="Tell us about pressure preference, allergies, pregnancy, injuries, or anything we should know." /></label></section></div>;
-}
-
-function AboutPage() { return <div className="container pagePad"><PageHero eyebrow="About" title="A sanctuary made for slower days." /><section className="aboutLayout reveal"><div><h2>Wellness without the noise.</h2><p>AURA was created as a calm escape from fast schedules, loud spaces and rushed self-care.</p><p>Every room is quiet, every treatment adapts to the guest, and every visit ends with space to rest before returning outside.</p></div><img src={IMG.spa} alt="Spa treatment" onError={(e) => { e.currentTarget.src = FALLBACK; }} /></section><div className="values stagger"><Value icon={Leaf} title="Natural materials" text="Soft textiles, warm stone, botanical oils and calming aromas." /><Value icon={Sparkles} title="Personalized rituals" text="Treatments adapt to pressure preference, mood and recovery needs." /><Value icon={Waves} title="Recovery first" text="Heat, breath, touch and rest are combined for nervous system reset." /></div></div>; }
-function GalleryPage() { return <div className="container pagePad"><PageHero eyebrow="Gallery" title="Quiet rooms, warm textures, softer light." /><div className="galleryGrid stagger">{GALLERY.map((image, index) => <img key={image} src={image} alt={`AURA gallery ${index + 1}`} onError={(e) => { e.currentTarget.src = FALLBACK; }} />)}</div></div>; }
-function ContactPage() { return <div className="container pagePad"><PageHero eyebrow="Contact" title="Visit, call, or plan a private spa day." /><section className="contactLayout reveal"><div className="contactCards stagger"><ContactCard icon={MapPin} title="Address" text="42 Willow Lane, Sofia Wellness District" /><ContactCard icon={Phone} title="Phone" text="+359 88 000 0000" /><ContactCard icon={Mail} title="Email" text="hello@aurawellness.example" /><ContactCard icon={Clock} title="Hours" text="Daily · 9 AM - 9 PM" /></div><form className="contactForm"><Field label="Name" placeholder="Your name" /><Field label="Email" placeholder="you@example.com" /><Field label="Subject" placeholder="Booking, group visit, private event." /><label className="field"><span>Message</span><textarea rows="7" placeholder="How can we help?" /></label><button type="button" className="primaryBtn">Send message</button></form></section></div>; }
-function SectionHead({ eyebrow, title, text }) { return <div className="sectionHead reveal"><div className="eyebrow">{eyebrow}</div><h2>{title}</h2>{text && <p>{text}</p>}</div>; }
-function PageHero({ eyebrow, title, text }) { return <section className="pageHero reveal"><div className="eyebrow">{eyebrow}</div><h1>{title}</h1>{text && <p>{text}</p>}</section>; }
-function InfoBox({ label, value }) { return <article className="infoBox"><span>{label}</span><strong>{value}</strong></article>; }
-function PackageCard({ icon: Icon, title, price, text }) { return <article className="packageCard"><Icon size={30} /><span>{price}</span><h3>{title}</h3><p>{text}</p></article>; }
-function Value({ icon: Icon, title, text }) { return <article className="valueCard"><Icon size={30} /><h3>{title}</h3><p>{text}</p></article>; }
-function ContactCard({ icon: Icon, title, text }) { return <article className="contactCard"><Icon size={26} /><div><h3>{title}</h3><p>{text}</p></div></article>; }
-function Field({ label, placeholder }) { return <label className="field"><span>{label}</span><input placeholder={placeholder} /></label>; }
-function Footer({ goTo }) { return <footer className="footer"><div className="container footerGrid"><div><button className="brand footerBrand" onClick={() => goTo("home")}><span className="brandMark"><Flower2 size={24} /></span><span><strong>AURA</strong><small>Wellness Spa</small></span></button><p>Thermal pools, saunas, steam rooms, jacuzzis, massage therapy and calm recovery in a premium wellness space.</p></div><div><h3>Explore</h3><button onClick={() => goTo("treatments")}>Treatments</button><button onClick={() => goTo("booking")}>Booking</button><button onClick={() => goTo("gallery")}>Gallery</button></div><div><h3>Visit</h3><p>42 Willow Lane</p><p>Sofia Wellness District</p><p>Daily · 9 AM - 9 PM</p></div><div><h3>Contact</h3><p>+359 88 000 0000</p><p>hello@aurawellness.example</p><p>@aurawellness.spa</p></div></div></footer>; }
