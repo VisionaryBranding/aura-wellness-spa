@@ -1016,3 +1016,36 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Momentum / inertia smooth scrolling layer */
+.smooth-scroll-content {
+  will-change: transform;
+}
+
+.smooth-scroll-content.smooth-ready {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  overflow: hidden;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+@media (pointer: coarse) {
+  .smooth-scroll-content.smooth-ready {
+    position: static;
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smooth-scroll-content.smooth-ready {
+    position: static;
+    transform: none !important;
+  }
+
+  .reveal {
+    transition: none;
+  }
+}

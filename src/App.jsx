@@ -173,6 +173,145 @@ function App() {
   const [activeMenu, setActiveMenu] = useState(null);
 
   useEffect(() => {
+    const isTouchDevice =
+      window.matchMedia('(pointer: coarse)').matches ||
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (isTouchDevice || prefersReducedMotion) {
+      return;
+    }
+
+    const scrollContainer = document.querySelector('.smooth-scroll-content');
+    if (!scrollContainer) return;
+
+    let currentScroll = window.scrollY;
+    let targetScroll = window.scrollY;
+    let animationFrame = null;
+    let isRunning = false;
+
+    const setBodyHeight = () => {
+      document.body.style.height = `${scrollContainer.getBoundingClientRect().height}px`;
+    };
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const render = () => {
+      currentScroll += (targetScroll - currentScroll) * 0.085;
+
+      if (Math.abs(targetScroll - currentScroll) < 0.08) {
+        currentScroll = targetScroll;
+      }
+
+      scrollContainer.style.transform = `translate3d(0, ${-currentScroll}px, 0)`;
+
+      if (Math.abs(targetScroll - currentScroll) > 0.08) {
+        animationFrame = requestAnimationFrame(render);
+      } else {
+        isRunning = false;
+      }
+    };
+
+    const startRender = () => {
+      if (!isRunning) {
+        isRunning = true;
+        animationFrame = requestAnimationFrame(render);
+      }
+    };
+
+    const handleWheel = (event) => {
+      event.preventDefault();
+
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+      targetScroll = clamp(targetScroll + event.deltaY * 1.05, 0, maxScroll);
+
+      window.scrollTo(0, targetScroll);
+      startRender();
+    };
+
+    const handleScroll = () => {
+      targetScroll = window.scrollY;
+      startRender();
+    };
+
+    const handleResize = () => {
+      setBodyHeight();
+      targetScroll = clamp(targetScroll, 0, document.body.scrollHeight - window.innerHeight);
+      currentScroll = clamp(currentScroll, 0, document.body.scrollHeight - window.innerHeight);
+      startRender();
+    };
+
+    const handleKeydown = (event) => {
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+
+      if (event.key === 'ArrowDown') {
+        targetScroll = clamp(targetScroll + 90, 0, maxScroll);
+        window.scrollTo(0, targetScroll);
+        startRender();
+      }
+
+      if (event.key === 'ArrowUp') {
+        targetScroll = clamp(targetScroll - 90, 0, maxScroll);
+        window.scrollTo(0, targetScroll);
+        startRender();
+      }
+
+      if (event.key === 'PageDown') {
+        targetScroll = clamp(targetScroll + window.innerHeight * 0.85, 0, maxScroll);
+        window.scrollTo(0, targetScroll);
+        startRender();
+      }
+
+      if (event.key === 'PageUp') {
+        targetScroll = clamp(targetScroll - window.innerHeight * 0.85, 0, maxScroll);
+        window.scrollTo(0, targetScroll);
+        startRender();
+      }
+
+      if (event.key === 'Home') {
+        targetScroll = 0;
+        window.scrollTo(0, targetScroll);
+        startRender();
+      }
+
+      if (event.key === 'End') {
+        targetScroll = maxScroll;
+        window.scrollTo(0, targetScroll);
+        startRender();
+      }
+    };
+
+    window.__auraSmoothScrollTo = (top) => {
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+      targetScroll = clamp(top, 0, maxScroll);
+      window.scrollTo(0, targetScroll);
+      startRender();
+    };
+
+    setBodyHeight();
+    scrollContainer.classList.add('smooth-ready');
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('keydown', handleKeydown);
+
+    return () => {
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      document.body.style.height = '';
+      scrollContainer.style.transform = '';
+      scrollContainer.classList.remove('smooth-ready');
+      delete window.__auraSmoothScrollTo;
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('keydown', handleKeydown);
+    };
+  }, []);
+
+
+  useEffect(() => {
     const revealTargets = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
       (entries) => {
@@ -226,7 +365,13 @@ function App() {
     const header = document.querySelector('.site-header');
     const headerOffset = header ? header.offsetHeight + 24 : 24;
     const y = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-    window.scrollTo({ top: y, behavior: 'smooth' });
+
+    if (window.__auraSmoothScrollTo) {
+      window.__auraSmoothScrollTo(y);
+    } else {
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
     setActiveMenu(null);
   };
 
@@ -314,6 +459,7 @@ function App() {
         </div>
       </header>
 
+      <div className="smooth-scroll-content">
       <main>
         <section className="hero-grid" id="home">
           <div className="hero-copy reveal">
@@ -556,6 +702,7 @@ function App() {
           <a href="mailto:hello@aurawellnessspa.com">hello@aurawellnessspa.com</a>
         </div>
       </footer>
+      </div>
     </div>
   );
 }
