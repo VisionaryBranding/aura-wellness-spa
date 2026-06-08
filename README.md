@@ -1,17 +1,12 @@
-# AURA Wellness Spa — upgraded pack
+# AURA Thermal House — Vercel Lenis Build
 
-React/Vite spa landing page with a sharper editorial redesign, Lenis inertia scrolling, hidden scrollbar, treatment filters, favorites, premium private-suite section and animated reveal effects.
+Upload/replace these files in GitHub. Vercel will install dependencies automatically from `package.json` and deploy the site.
 
-## Run locally
+## Important
 
-```bash
-npm install
-npm run dev
-```
+Do **not** upload `node_modules`. Do **not** upload `dist`.
 
-## Deploy on Vercel
-
-Upload/replace these files in your GitHub repo:
+## Files
 
 - `src/App.jsx`
 - `src/App.css`
@@ -20,18 +15,13 @@ Upload/replace these files in your GitHub repo:
 - `index.html`
 - `package.json`
 - `.gitignore`
-- `README.md`
 
-Do **not** upload `node_modules`. Vercel installs dependencies from `package.json` automatically.
+## Smooth Scroll
 
-## What changed
+Lenis is imported from the npm package:
 
-- Lenis now imports from the installed package: `import Lenis from 'lenis'`
-- Stronger luxury/editorial visual direction
-- Smooth momentum scroll and smooth anchor navigation
-- Hidden right scrollbar
-- Searchable/filterable treatment catalogue
-- Favorite buttons on treatment cards
-- Uses your uploaded SVG treatment icons from `public/assets`
-- Cleaner mobile navigation
-- Better CTA/booking section
+```js
+import Lenis from 'lenis';
+```
+
+So it works on GitHub/Vercel builds without a CDN import.
