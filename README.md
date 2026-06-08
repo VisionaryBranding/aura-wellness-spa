@@ -1,27 +1,15 @@
-# AURA Thermal House — Vercel Lenis Build
+# AURA Thermal House
 
-Upload/replace these files in GitHub. Vercel will install dependencies automatically from `package.json` and deploy the site.
+Vercel-ready React/Vite spa redesign with Lenis inertia scrolling.
 
-## Important
-
-Do **not** upload `node_modules`. Do **not** upload `dist`.
-
-## Files
+Upload/replace these files in GitHub:
 
 - `src/App.jsx`
 - `src/App.css`
 - `src/main.jsx`
-- `public/assets/*.svg`
+- `public/assets/*`
 - `index.html`
 - `package.json`
 - `.gitignore`
 
-## Smooth Scroll
-
-Lenis is imported from the npm package:
-
-```js
-import Lenis from 'lenis';
-```
-
-So it works on GitHub/Vercel builds without a CDN import.
+Do not upload `node_modules`, `dist`, or `.vite`. Vercel installs dependencies automatically from `package.json`.
