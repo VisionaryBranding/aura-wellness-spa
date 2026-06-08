@@ -1,6 +1,6 @@
-# AURA Wellness Spa
+# AURA Wellness Spa — upgraded pack
 
-SSENSE-inspired spa catalogue built with React, Vite, Lenis smooth scrolling and editorial hover menus.
+React/Vite spa landing page with a sharper editorial redesign, Lenis inertia scrolling, hidden scrollbar, treatment filters, favorites, premium private-suite section and animated reveal effects.
 
 ## Run locally
 
@@ -9,30 +9,29 @@ npm install
 npm run dev
 ```
 
-## Deploy
+## Deploy on Vercel
 
-Upload these files to GitHub, then Vercel will auto-deploy:
+Upload/replace these files in your GitHub repo:
 
-- src/App.jsx
-- src/App.css
-- src/main.jsx
-- index.html
-- package.json
-- README.md
-- .gitignore
+- `src/App.jsx`
+- `src/App.css`
+- `src/main.jsx`
+- `public/assets/*.svg`
+- `index.html`
+- `package.json`
+- `.gitignore`
+- `README.md`
 
-Do not upload node_modules or package-lock.json.
+Do **not** upload `node_modules`. Vercel installs dependencies from `package.json` automatically.
 
-## Latest update
+## What changed
 
-- Browser back/forward support with hash routes
-- Hidden scrollbar
-- Cleaner compact dropdown menus
-- Working menu/filter buttons
+- Lenis now imports from the installed package: `import Lenis from 'lenis'`
+- Stronger luxury/editorial visual direction
+- Smooth momentum scroll and smooth anchor navigation
+- Hidden right scrollbar
+- Searchable/filterable treatment catalogue
 - Favorite buttons on treatment cards
-- Expanded sauna catalogue: Finnish, wood-burning, electric, infrared, smoke, barrel, salt and herbal sauna styles
-- More polished card, button and scroll reveal animations
-
-
-## V18
-Fixed catalogue title collision on the Treatments page so the heading no longer slides behind the treatment cards. Kept the scrollbar hidden and preserved browser back/forward routing.
+- Uses your uploaded SVG treatment icons from `public/assets`
+- Cleaner mobile navigation
+- Better CTA/booking section
